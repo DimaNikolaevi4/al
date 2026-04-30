@@ -19,7 +19,7 @@
 - [Конфигурация](#-конфигурация)
 - [Структура репозитория](#-структура-репозитория)
 - [Статус реализации](#-статус-реализации)
-- [Roadmap](#-roadmap)
+- [Дорожная карта](#-дорожная-карта)
 - [Участие в разработке](#-участие-в-разработке)
 - [Команда](#-команда)
 - [Лицензия](#-лицензия)
@@ -134,22 +134,25 @@ flowchart TB
 
 ```bash
 # 1. Клонирование репозитория
-git clone https://github.com/your-org/ai-tutor-spo.git
-cd ai-tutor-spo
+git clone https://git.qubu.ai/REDACTED_USERNAME/ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-dlya-spo.git
+cd ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-dlya-spo
 
-# 2. Создание виртуального окружения
+# 2. Установка Git LFS (для работы с большими файлами)
+git lfs install
+
+# 3. Создание виртуального окружения
 python3 -m venv .venv
 source .venv/bin/activate
 
-# 3. Установка зависимостей
+# 4. Установка зависимостей
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# 4. Настройка переменных окружения
+# 5. Настройка переменных окружения
 cp .env.example .env
 # Отредактируйте .env под вашу конфигурацию
 
-# 5. Запуск тьютора
+# 6. Запуск тьютора
 python tutor.py
 ```
 
@@ -157,22 +160,25 @@ python tutor.py
 
 ```powershell
 # 1. Клонирование репозитория
-git clone https://github.com/your-org/ai-tutor-spo.git
-cd ai-tutor-spo
+git clone https://git.qubu.ai/REDACTED_USERNAME/ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-dlya-spo.git
+cd ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-dlya-spo
 
-# 2. Создание виртуального окружения
+# 2. Установка Git LFS
+git lfs install
+
+# 3. Создание виртуального окружения
 python -m venv .venv
 .\.venv\Scripts\activate
 
-# 3. Установка зависимостей
+# 4. Установка зависимостей
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# 4. Настройка переменных окружения
+# 5. Настройка переменных окружения
 copy .env.example .env
 # Отредактируйте .env под вашу конфигурацию
 
-# 5. Запуск тьютора
+# 6. Запуск тьютора
 python tutor.py
 ```
 
@@ -214,7 +220,7 @@ docker run --gpus all -p 8000:8000 ai-tutor-spo:latest
 ## 📦 Структура репозитория
 
 ```
-ai-tutor-spo/
+ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-dlya-spo/
 ├── tutor.py              # Основной модуль ИИ-тьютора
 ├── requirements.txt      # Зависимости Python
 ├── .env.example          # Пример конфигурации
@@ -240,7 +246,7 @@ ai-tutor-spo/
 
 ---
 
-## 🗺 Roadmap
+## 🗺 Дорожная карта
 
 ### v0.3.0 — Q3 2024 (Планируется)
 - [ ] Интеграция с Moodle через REST API
@@ -308,6 +314,7 @@ pytest test_tutor.py -v
 - [Hugging Face Transformers](https://huggingface.co/docs/transformers/)
 - [PEFT Documentation](https://huggingface.co/docs/peft/)
 - [Moodle Web Services](https://docs.moodle.org/dev/Web_services)
+- [Репозиторий на Qubu](https://git.qubu.ai/REDACTED_USERNAME/ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-dlya-spo)
 
 ---
 

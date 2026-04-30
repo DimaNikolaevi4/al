@@ -1,10 +1,10 @@
 """
-Unit tests for the Intelligent Tutor module.
+Unit-тесты для модуля интеллектуального тьютора.
 
-This module contains comprehensive tests for the AI Tutor SPO project,
-following Test-Driven Development (TDD) best practices.
+Этот модуль содержит комплексные тесты для проекта ИИ-тьютор для СПО,
+следующие лучшим практикам Test-Driven Development (TDD).
 
-Run tests with: pytest test_tutor.py -v
+Запуск тестов: pytest test_tutor.py -v
 """
 
 from __future__ import annotations
@@ -13,8 +13,8 @@ import pytest
 from unittest.mock import Mock, patch, MagicMock
 from pathlib import Path
 
-# Import the module under test
-# Note: Actual imports will work once the module is properly installed
+# Импорт тестируемого модуля
+# Примечание: фактические импорты будут работать после корректной установки модуля
 try:
     from tutor import (
         IntelligentTutor,
@@ -23,12 +23,12 @@ try:
         setup_logging,
     )
 except ImportError:
-    # For testing in isolation without model dependencies
-    pytest.skip("tutor module not available", allow_module_level=True)
+    # Для тестирования в изоляции без зависимостей модели
+    pytest.skip("модуль tutor недоступен", allow_module_level=True)
 
 
 class TestIntelligentTutorInit:
-    """Tests for IntelligentTutor initialization."""
+    """Тесты инициализации IntelligentTutor."""
 
     @patch('tutor.AutoTokenizer.from_pretrained')
     @patch('tutor.AutoModelForCausalLM.from_pretrained')
@@ -37,8 +37,8 @@ class TestIntelligentTutorInit:
         mock_model_load: Mock,
         mock_tokenizer_load: Mock
     ) -> None:
-        """Test successful initialization with a valid model ID."""
-        # Arrange
+        """Тест успешной инициализации с корректным ID модели."""
+        # Подготовка
         mock_tokenizer = MagicMock()
         mock_tokenizer.pad_token = None
         mock_tokenizer.eos_token = "</s>"
@@ -48,10 +48,10 @@ class TestIntelligentTutorInit:
         mock_model.parameters.return_value = [MagicMock(numel=lambda: 24000000000)]
         mock_model_load.return_value = mock_model
 
-        # Act
+        # Действие
         tutor = IntelligentTutor("test-model")
 
-        # Assert
+        # Проверка
         assert tutor.model_id == "test-model"
         assert tutor.adapter_path is None
         mock_tokenizer_load.assert_called_once_with("test-model")
@@ -62,15 +62,15 @@ class TestIntelligentTutorInit:
         self,
         mock_tokenizer_load: Mock
     ) -> None:
-        """Test that invalid model ID raises ModelLoadError."""
-        # Arrange
-        mock_tokenizer_load.side_effect = FileNotFoundError("Model not found")
+        """Тест: некорректный ID модели вызывает ModelLoadError."""
+        # Подготовка
+        mock_tokenizer_load.side_effect = FileNotFoundError("Модель не найдена")
 
-        # Act & Assert
+        # Действие и проверка
         with pytest.raises(ModelLoadError) as exc_info:
             IntelligentTutor("invalid-model-path")
 
-        assert "Failed to initialize IntelligentTutor" in str(exc_info.value)
+        assert "Не удалось инициализировать IntelligentTutor" in str(exc_info.value)
 
     @patch('tutor.AutoTokenizer.from_pretrained')
     @patch('tutor.AutoModelForCausalLM.from_pretrained')
@@ -81,8 +81,8 @@ class TestIntelligentTutorInit:
         mock_model_load: Mock,
         mock_tokenizer_load: Mock
     ) -> None:
-        """Test initialization with LoRA adapter loading."""
-        # Arrange
+        """Тест инициализации с загрузкой LoRA-адаптера."""
+        # Подготовка
         mock_tokenizer = MagicMock()
         mock_tokenizer.pad_token = None
         mock_tokenizer_load.return_value = mock_tokenizer
@@ -94,20 +94,20 @@ class TestIntelligentTutorInit:
         mock_peft_model = MagicMock()
         mock_peft_load.return_value = mock_peft_model
 
-        # Act
+        # Действие
         tutor = IntelligentTutor("test-model", adapter_path="./lora-adapter")
 
-        # Assert
+        # Проверка
         assert tutor.adapter_path == "./lora-adapter"
         mock_peft_load.assert_called_once()
 
 
 class TestIntelligentTutorGeneration:
-    """Tests for text generation methods."""
+    """Тесты методов генерации текста."""
 
     @pytest.fixture
     def mock_tutor(self) -> IntelligentTutor:
-        """Create a mocked IntelligentTutor instance."""
+        """Создание замоканного экземпляра IntelligentTutor."""
         with patch('tutor.AutoTokenizer.from_pretrained') as mock_tokenizer, \
              patch('tutor.AutoModelForCausalLM.from_pretrained') as mock_model:
 
@@ -132,94 +132,94 @@ class TestIntelligentTutorGeneration:
         self,
         mock_tutor: IntelligentTutor
     ) -> None:
-        """Test that empty lecture text raises ValueError."""
-        # Act & Assert
-        with pytest.raises(ValueError, match="cannot be empty"):
+        """Тест: пустой текст лекции вызывает ValueError."""
+        # Действие и проверка
+        with pytest.raises(ValueError, match="не может быть пустым"):
             mock_tutor.generate_lecture_summary("")
 
-        with pytest.raises(ValueError, match="cannot be empty"):
+        with pytest.raises(ValueError, match="не может быть пустым"):
             mock_tutor.generate_lecture_summary("   ")
 
     def test_generate_summary_with_valid_text(
         self,
         mock_tutor: IntelligentTutor
     ) -> None:
-        """Test successful summary generation."""
-        # Arrange
-        mock_tutor.tokenizer.decode.return_value = "Test summary output"
+        """Тест успешной генерации конспекта."""
+        # Подготовка
+        mock_tutor.tokenizer.decode.return_value = "Тестовый конспект"
         mock_tutor.model.generate.return_value = [MagicMock()]
 
-        # Act
-        result = mock_tutor.generate_lecture_summary("Test lecture content")
+        # Действие
+        result = mock_tutor.generate_lecture_summary("Текст тестовой лекции")
 
-        # Assert
+        # Проверка
         assert isinstance(result, str)
         assert len(result) > 0
 
 
 class TestErrorHandling:
-    """Tests for custom exception classes."""
+    """Тесты кастомных классов исключений."""
 
     def test_model_load_error_with_original_error(self) -> None:
-        """Test ModelLoadError preserves original exception."""
-        # Arrange
-        original = FileNotFoundError("File not found")
+        """Тест: ModelLoadError сохраняет исходное исключение."""
+        # Подготовка
+        original = FileNotFoundError("Файл не найден")
 
-        # Act
-        error = ModelLoadError("Failed to load", original_error=original)
+        # Действие
+        error = ModelLoadError("Ошибка загрузки", original_error=original)
 
-        # Assert
+        # Проверка
         assert error.original_error == original
-        assert str(error) == "Failed to load"
+        assert str(error) == "Ошибка загрузки"
 
     def test_inference_error_with_original_error(self) -> None:
-        """Test InferenceError preserves original exception."""
-        # Arrange
-        original = RuntimeError("CUDA error")
+        """Тест: InferenceError сохраняет исходное исключение."""
+        # Подготовка
+        original = RuntimeError("Ошибка CUDA")
 
-        # Act
-        error = InferenceError("Generation failed", original_error=original)
+        # Действие
+        error = InferenceError("Ошибка генерации", original_error=original)
 
-        # Assert
+        # Проверка
         assert error.original_error == original
 
 
 class TestLogging:
-    """Tests for logging configuration."""
+    """Тесты конфигурации логирования."""
 
     @patch('tutor.logging.basicConfig')
     def test_setup_logging_default_level(self, mock_config: Mock) -> None:
-        """Test logging setup with default INFO level."""
-        # Act
+        """Тест настройки логирования с уровнем INFO по умолчанию."""
+        # Действие
         setup_logging()
 
-        # Assert
+        # Проверка
         mock_config.assert_called_once()
         call_kwargs = mock_config.call_args[1]
-        assert call_kwargs['level'] == 20  # INFO level
+        assert call_kwargs['level'] == 20  # Уровень INFO
 
     @patch('tutor.logging.basicConfig')
     def test_setup_logging_custom_level(self, mock_config: Mock) -> None:
-        """Test logging setup with custom DEBUG level."""
-        # Act
+        """Тест настройки логирования с кастомным уровнем DEBUG."""
+        # Действие
         setup_logging("DEBUG")
 
-        # Assert
+        # Проверка
         call_kwargs = mock_config.call_args[1]
-        assert call_kwargs['level'] == 10  # DEBUG level
+        assert call_kwargs['level'] == 10  # Уровень DEBUG
 
 
 class TestImports:
-    """Basic import tests to ensure module structure."""
+    """Базовые тесты импортов для проверки структуры модуля."""
 
     def test_module_importable(self) -> None:
-        """Test that the tutor module can be imported."""
-        # This test passes if we got here without ImportError
+        """Тест: модуль tutor может быть импортирован."""
+        # Тест считается пройденным, если мы дошли сюда без ImportError
         import tutor
         assert hasattr(tutor, 'IntelligentTutor')
 
     def test_exception_classes_exist(self) -> None:
-        """Test that custom exception classes are defined."""
+        """Тест: кастомные классы исключений определены."""
         from tutor import ModelLoadError, InferenceError
 
         assert issubclass(ModelLoadError, Exception)
@@ -227,41 +227,41 @@ class TestImports:
 
 
 # =============================================================================
-# Integration Tests (require actual model - skip in CI)
+# Интеграционные тесты (требуют реальной модели — пропускаются в CI)
 # =============================================================================
 
 @pytest.mark.integration
 class TestIntegration:
-    """Integration tests requiring actual model loading.
+    """Интеграционные тесты, требующие реальной загрузки модели.
 
-    These tests are marked with @pytest.mark.integration and will be
-    skipped by default. Run with: pytest -m integration
+    Эти тесты помечены @pytest.mark.integration и будут пропущены по умолчанию.
+    Запуск: pytest -m integration
     """
 
-    @pytest.mark.skip(reason="Requires actual model and GPU")
+    @pytest.mark.skip(reason="Требует реальной модели и GPU")
     def test_real_model_loading(self) -> None:
-        """Test loading actual model from Hugging Face."""
-        # This test would load the real model
-        # Run manually only with proper GPU setup
+        """Тест загрузки реальной модели из Hugging Face."""
+        # Этот тест загрузил бы реальную модель
+        # Запускать вручную только с правильной настройкой GPU
         pass
 
-    @pytest.mark.skip(reason="Requires actual model and GPU")
+    @pytest.mark.skip(reason="Требует реальной модели и GPU")
     def test_real_inference(self) -> None:
-        """Test actual inference with real model."""
+        """Тест реального инференса с реальной моделью."""
         pass
 
 
 # =============================================================================
-# Fixtures and Configuration
+# Фикстуры и конфигурация
 # =============================================================================
 
 def pytest_configure(config: pytest.Config) -> None:
-    """Configure custom pytest markers."""
+    """Конфигурация кастомных маркеров pytest."""
     config.addinivalue_line(
-        "markers", "integration: marks tests as integration tests"
+        "markers", "integration: помечает тесты как интеграционные"
     )
 
 
 if __name__ == "__main__":
-    # Run tests when executed directly
+    # Запуск тестов при прямом выполнении
     pytest.main([__file__, "-v", "--tb=short"])

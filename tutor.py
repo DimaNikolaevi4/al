@@ -1,13 +1,13 @@
 """
-Intelligent Tutor Module for Vocational Education (SPO).
+Модуль интеллектуального тьютора для среднего профессионального образования (СПО).
 
-This module provides an AI-powered tutoring system based on Large Language Models (LLM).
-It supports loading base models and LoRA adapters for specialized educational content
-generation in Russian vocational education institutions.
+Этот модуль предоставляет систему ИИ-тьютора на базе больших языковых моделей (LLM).
+Поддерживает загрузку базовых моделей и LoRA-адаптеров для генерации специализированного
+образовательного контента в российских учебных заведениях СПО.
 
-Author: SIT College AI Team (Bardakov D.N., Myshanskaya N.G.)
-License: Apache 2.0
-Version: 0.2.0
+Автор: Команда ИИ СИТ (Бардаков Д.Н., Мышанская Н.Г.)
+Лицензия: Apache 2.0
+Версия: 0.2.0
 """
 
 from __future__ import annotations
@@ -22,72 +22,73 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel
 
-# Configure module-level logger
+# Настройка логгера на уровне модуля
 logger = logging.getLogger(__name__)
 
 
 class ModelLoadError(Exception):
-    """Custom exception raised when model loading fails.
+    """Исключение, возникающее при ошибке загрузки модели.
 
-    This exception is raised when the base model or LoRA adapters
-    cannot be loaded from the specified path.
+    Вызывается, когда базовую модель или LoRA-адаптеры не удалось
+    загрузить из указанного пути.
     """
 
     def __init__(self, message: str, original_error: Optional[Exception] = None) -> None:
-        """Initialize ModelLoadError with context.
+        """Инициализация ModelLoadError с контекстом ошибки.
 
-        Args:
-            message: Human-readable error description.
-            original_error: The original exception that caused this error.
+        Аргументы:
+            message: Человекочитаемое описание ошибки.
+            original_error: Исходное исключение, вызвавшее эту ошибку.
         """
         super().__init__(message)
         self.original_error = original_error
 
 
 class InferenceError(Exception):
-    """Custom exception raised during inference failures.
+    """Исключение, возникающее при ошибках инференса.
 
-    This exception is raised when text generation fails due to
-    memory constraints, invalid inputs, or model errors.
+    Вызывается, когда генерация текста не удалась из-за
+    нехватки памяти, некорректных входных данных или ошибок модели.
     """
 
     def __init__(self, message: str, original_error: Optional[Exception] = None) -> None:
-        """Initialize InferenceError with context.
+        """Инициализация InferenceError с контекстом ошибки.
 
-        Args:
-            message: Human-readable error description.
-            original_error: The original exception that caused this error.
+        Аргументы:
+            message: Человекочитаемое описание ошибки.
+            original_error: Исходное исключение, вызвавшее эту ошибку.
         """
         super().__init__(message)
         self.original_error = original_error
 
 
 class IntelligentTutor:
-    """AI-powered intelligent tutor for vocational education (SPO).
+    """ИИ-тьютор для среднего профессионального образования (СПО).
 
-    This class provides an interface to a Large Language Model specialized
-    for educational content generation. It supports loading Mistral-family
-    models with optional LoRA adapters fine-tuned on SPO curriculum materials.
+    Предоставляет интерфейс к большой языковой модели, специализированной
+    для генерации образовательного контента. Поддерживает загрузку моделей
+    семейства Mistral с опциональными LoRA-адаптерами, дообученными на
+    учебных материалах СПО.
 
-    The tutor can generate structured lecture summaries, quizzes, and
-    personalized learning materials for students in technical colleges.
+    Тьютор может генерировать структурированные конспекты лекций, тесты и
+    персонализированные учебные материалы для студентов техникумов.
 
-    Attributes:
-        model: The loaded language model (base or with LoRA adapters).
-        tokenizer: The tokenizer corresponding to the loaded model.
-        model_id: Identifier of the loaded base model.
-        adapter_path: Path to LoRA adapters if loaded, None otherwise.
+    Атрибуты:
+        model: Загруженная языковая модель (базовая или с LoRA-адаптерами).
+        tokenizer: Токенизатор, соответствующий загруженной модели.
+        model_id: Идентификатор загруженной базовой модели.
+        adapter_path: Путь к LoRA-адаптерам (если загружены), иначе None.
 
-    Example:
+    Пример использования:
         >>> tutor = IntelligentTutor(
         ...     base_model_id="mistralai/Mistral-Small-24B-Instruct-2501"
         ... )
         >>> summary = tutor.generate_lecture_summary(lecture_text)
     """
 
-    # TODO: Add response caching to reduce redundant inference calls
-    # TODO: Optimize quantization for lower VRAM usage (4-bit/8-bit)
-    # TODO: Implement streaming output for better UX in web interface
+    # TODO: Добавить кэширование ответов для снижения количества инференсов
+    # TODO: Оптимизировать квантование для экономии видеопамяти (4-bit/8-bit)
+    # TODO: Реализовать потоковый вывод для лучшего UX в веб-интерфейсе
 
     def __init__(
         self,
@@ -99,30 +100,30 @@ class IntelligentTutor:
         trust_remote_code: bool = True,
         max_memory: Optional[dict[str, str]] = None,
     ) -> None:
-        """Initialize the Intelligent Tutor with a base model and optional adapters.
+        """Инициализация интеллектуального тьютора с базовой моделью и опциональными адаптерами.
 
-        Loads the specified language model from Hugging Face Hub or local path.
-        If an adapter path is provided, loads LoRA adapters on top of the base model.
+        Загружает указанную языковую модель из Hugging Face Hub или локального пути.
+        Если указан путь к адаптерам, загружает LoRA-адаптеры поверх базовой модели.
 
-        Args:
-            base_model_id: Hugging Face model ID or local path to the base model.
-                Example: "mistralai/Mistral-Small-24B-Instruct-2501" or "/mnt/models/mistral".
-            adapter_path: Path to LoRA adapter weights. If None, only base model is loaded.
-            torch_dtype: Data type for model weights. Default: torch.float16 for memory efficiency.
-            device_map: Strategy for device placement. Default: "auto" for automatic GPU allocation.
-            trust_remote_code: Whether to trust remote code from model repository.
-            max_memory: Maximum memory per GPU. Example: {"0": "20GB", "1": "20GB"}.
+        Аргументы:
+            base_model_id: ID модели Hugging Face или локальный путь к базовой модели.
+                Пример: "mistralai/Mistral-Small-24B-Instruct-2501" или "/mnt/models/mistral".
+            adapter_path: Путь к весам LoRA-адаптеров. Если None, загружается только базовая модель.
+            torch_dtype: Тип данных для весов модели. По умолчанию: torch.float16 для экономии памяти.
+            device_map: Стратегия размещения устройств. По умолчанию: "auto" для автоматического распределения GPU.
+            trust_remote_code: Доверять ли удалённый код из репозитория модели.
+            max_memory: Максимальная память на GPU. Пример: {"0": "20GB", "1": "20GB"}.
 
-        Raises:
-            ModelLoadError: If the model or adapters cannot be loaded.
+        Исключения:
+            ModelLoadError: Если модель или адаптеры не удалось загрузить.
 
-        Note:
-            Loading a 24B parameter model requires approximately 48GB VRAM in float16.
-            Consider using quantization for lower-memory setups.
+        Примечание:
+            Загрузка модели с 24B параметров требует примерно 48GB VRAM в float16.
+            Рассмотрите использование квантования для систем с меньшим объёмом памяти.
         """
-        logger.info("Initializing IntelligentTutor system")
-        logger.info(f"Base model ID: {base_model_id}")
-        logger.debug(f"Adapter path: {adapter_path}")
+        logger.info("Инициализация системы IntelligentTutor")
+        logger.info(f"ID базовой модели: {base_model_id}")
+        logger.debug(f"Путь к адаптерам: {adapter_path}")
         logger.debug(f"Torch dtype: {torch_dtype}, Device map: {device_map}")
 
         self.model_id = str(base_model_id)
@@ -141,34 +142,34 @@ class IntelligentTutor:
             if adapter_path:
                 self._load_adapters(adapter_path)
         except Exception as e:
-            logger.error(f"Failed to initialize tutor: {e}")
+            logger.error(f"Ошибка инициализации тьютора: {e}")
             raise ModelLoadError(
-                f"Failed to initialize IntelligentTutor with model {base_model_id}",
+                f"Не удалось инициализировать IntelligentTutor с моделью {base_model_id}",
                 original_error=e
             ) from e
 
-        logger.info("IntelligentTutor initialized successfully")
+        logger.info("IntelligentTutor успешно инициализирован")
 
     def _load_tokenizer(self) -> None:
-        """Load the tokenizer for the base model.
+        """Загрузка токенизатора для базовой модели.
 
-        Raises:
-            ModelLoadError: If tokenizer cannot be loaded.
+        Исключения:
+            ModelLoadError: Если токенизатор не удалось загрузить.
         """
-        logger.info(f"Loading tokenizer from: {self.model_id}")
+        logger.info(f"Загрузка токенизатора из: {self.model_id}")
         try:
             self._tokenizer = AutoTokenizer.from_pretrained(self.model_id)
-            # Ensure pad token is set for generation
+            # Убедимся, что pad_token установлен для генерации
             if self._tokenizer.pad_token is None:
                 self._tokenizer.pad_token = self._tokenizer.eos_token
-                logger.debug("Set pad_token to eos_token")
+                logger.debug("pad_token установлен в eos_token")
         except Exception as e:
-            logger.error(f"Failed to load tokenizer: {e}")
+            logger.error(f"Ошибка загрузки токенизатора: {e}")
             raise ModelLoadError(
-                f"Failed to load tokenizer from {self.model_id}",
+                f"Не удалось загрузить токенизатор из {self.model_id}",
                 original_error=e
             ) from e
-        logger.info("Tokenizer loaded successfully")
+        logger.info("Токенизатор успешно загружен")
 
     def _load_model(
         self,
@@ -177,19 +178,19 @@ class IntelligentTutor:
         trust_remote_code: bool,
         max_memory: Optional[dict[str, str]],
     ) -> None:
-        """Load the base language model.
+        """Загрузка базовой языковой модели.
 
-        Args:
-            torch_dtype: Data type for model weights.
-            device_map: Strategy for device placement.
-            trust_remote_code: Whether to trust remote code.
-            max_memory: Maximum memory per GPU.
+        Аргументы:
+            torch_dtype: Тип данных для весов модели.
+            device_map: Стратегия размещения устройств.
+            trust_remote_code: Доверять ли удалённый код.
+            max_memory: Максимальная память на GPU.
 
-        Raises:
-            ModelLoadError: If model cannot be loaded.
+        Исключения:
+            ModelLoadError: Если модель не удалось загрузить.
         """
-        logger.info(f"Loading base model from: {self.model_id}")
-        logger.debug(f"Model config - dtype: {torch_dtype}, device_map: {device_map}")
+        logger.info(f"Загрузка базовой модели из: {self.model_id}")
+        logger.debug(f"Конфигурация модели - dtype: {torch_dtype}, device_map: {device_map}")
 
         try:
             kwargs = {
@@ -199,93 +200,93 @@ class IntelligentTutor:
             }
             if max_memory:
                 kwargs["max_memory"] = max_memory
-                logger.debug(f"Max memory config: {max_memory}")
+                logger.debug(f"Конфигурация памяти: {max_memory}")
 
             self._model = AutoModelForCausalLM.from_pretrained(
                 self.model_id,
                 **kwargs
             )
         except torch.cuda.OutOfMemoryError as e:
-            logger.critical(f"CUDA out of memory while loading model: {e}")
+            logger.critical(f"CUDA out of memory при загрузке модели: {e}")
             raise ModelLoadError(
-                "CUDA out of memory. Consider using quantization or smaller model.",
+                "Недостаточно памяти CUDA. Рассмотрите использование квантования или меньшей модели.",
                 original_error=e
             ) from e
         except Exception as e:
-            logger.error(f"Failed to load model: {e}")
+            logger.error(f"Ошибка загрузки модели: {e}")
             raise ModelLoadError(
-                f"Failed to load model from {self.model_id}",
+                f"Не удалось загрузить модель из {self.model_id}",
                 original_error=e
             ) from e
 
-        logger.info("Base model loaded successfully")
+        logger.info("Базовая модель успешно загружена")
 
-        # Log model size and memory usage
+        # Логирование размера модели и использования памяти
         param_count = sum(p.numel() for p in self._model.parameters())
-        logger.info(f"Model parameters: {param_count / 1e9:.2f}B")
+        logger.info(f"Параметры модели: {param_count / 1e9:.2f}B")
 
     def _load_adapters(self, adapter_path: str | Path) -> None:
-        """Load LoRA adapters on top of the base model.
+        """Загрузка LoRA-адаптеров поверх базовой модели.
 
-        Args:
-            adapter_path: Path to the LoRA adapter weights.
+        Аргументы:
+            adapter_path: Путь к весам LoRA-адаптеров.
 
-        Raises:
-            ModelLoadError: If adapters cannot be loaded.
+        Исключения:
+            ModelLoadError: Если адаптеры не удалось загрузить.
         """
         adapter_path = str(adapter_path)
-        logger.info(f"Loading LoRA adapters from: {adapter_path}")
+        logger.info(f"Загрузка LoRA-адаптеров из: {adapter_path}")
 
         if not os.path.exists(adapter_path):
-            logger.error(f"Adapter path does not exist: {adapter_path}")
+            logger.error(f"Путь к адаптерам не существует: {adapter_path}")
             raise ModelLoadError(
-                f"Adapter path does not exist: {adapter_path}"
+                f"Путь к адаптерам не существует: {adapter_path}"
             )
 
         try:
             self._model = PeftModel.from_pretrained(self._model, adapter_path)
-            logger.info("LoRA adapters loaded successfully")
+            logger.info("LoRA-адаптеры успешно загружены")
         except Exception as e:
-            logger.error(f"Failed to load adapters: {e}")
+            logger.error(f"Ошибка загрузки адаптеров: {e}")
             raise ModelLoadError(
-                f"Failed to load LoRA adapters from {adapter_path}",
+                f"Не удалось загрузить LoRA-адаптеры из {adapter_path}",
                 original_error=e
             ) from e
 
     @property
     def model(self) -> AutoModelForCausalLM:
-        """Get the loaded model instance.
+        """Получение загруженной модели.
 
-        Returns:
-            The loaded language model.
+        Возвращает:
+            Загруженную языковую модель.
 
-        Raises:
-            RuntimeError: If model is not initialized.
+        Исключения:
+            RuntimeError: Если модель не инициализирована.
         """
         if self._model is None:
-            raise RuntimeError("Model not initialized")
+            raise RuntimeError("Модель не инициализирована")
         return self._model
 
     @property
     def tokenizer(self) -> AutoTokenizer:
-        """Get the loaded tokenizer instance.
+        """Получение загруженного токенизатора.
 
-        Returns:
-            The loaded tokenizer.
+        Возвращает:
+            Загруженный токенизатор.
 
-        Raises:
-            RuntimeError: If tokenizer is not initialized.
+        Исключения:
+            RuntimeError: Если токенизатор не инициализирован.
         """
         if self._tokenizer is None:
-            raise RuntimeError("Tokenizer not initialized")
+            raise RuntimeError("Токенизатор не инициализирован")
         return self._tokenizer
 
     @property
     def device(self) -> torch.device:
-        """Get the device where the model is loaded.
+        """Получение устройства, на котором загружена модель.
 
-        Returns:
-            The torch device of the model.
+        Возвращает:
+            Устройство torch модели.
         """
         return next(self.model.parameters()).device
 
@@ -299,59 +300,59 @@ class IntelligentTutor:
         top_k: int = 50,
         do_sample: bool = True,
     ) -> str:
-        """Generate a structured summary of a lecture for SPO students.
+        """Генерация структурированного конспекта лекции для студентов СПО.
 
-        Creates a concise, well-organized summary of the provided lecture text,
-        highlighting key concepts and main points suitable for vocational
-        education students.
+        Создаёт лаконичный, хорошо организованный конспект предоставленного
+        текста лекции, выделяя ключевые концепции и основные положения,
+        подходящие для студентов профессионального образования.
 
-        Args:
-            lecture_text: The full text of the lecture to summarize.
-            max_new_tokens: Maximum number of tokens to generate. Default: 512.
-            temperature: Sampling temperature for generation. Higher values produce
-                more creative outputs. Default: 0.7.
-            top_p: Nucleus sampling probability threshold. Default: 0.9.
-            top_k: Number of highest probability tokens to consider. Default: 50.
-            do_sample: Whether to use sampling for generation. Default: True.
+        Аргументы:
+            lecture_text: Полный текст лекции для конспектирования.
+            max_new_tokens: Максимальное количество токенов для генерации. По умолчанию: 512.
+            temperature: Температура сэмплирования для генерации. Более высокие значения
+                производят более творческие результаты. По умолчанию: 0.7.
+            top_p: Порог вероятности nucleus sampling. По умолчанию: 0.9.
+            top_k: Количество токенов с наивысшей вероятностью для рассмотрения. По умолчанию: 50.
+            do_sample: Использовать ли сэмплирование для генерации. По умолчанию: True.
 
-        Returns:
-            A structured summary of the lecture in Russian.
+        Возвращает:
+            Структурированный конспект лекции на русском языке.
 
-        Raises:
-            InferenceError: If generation fails due to model or memory errors.
-            ValueError: If lecture_text is empty.
+        Исключения:
+            InferenceError: Если генерация не удалась из-за ошибок модели или памяти.
+            ValueError: Если lecture_text пустой.
 
-        Example:
+        Пример использования:
             >>> lecture = "Тема: Основы промышленной автоматизации..."
             >>> summary = tutor.generate_lecture_summary(lecture)
             >>> print(summary)
         """
-        # TODO: Add support for multi-level summaries (basic/advanced)
-        # TODO: Implement automatic lecture segmentation for long texts
+        # TODO: Добавить поддержку многоуровневых конспектов (базовый/углублённый)
+        # TODO: Реализовать автоматическую сегментацию лекций для длинных текстов
 
         if not lecture_text or not lecture_text.strip():
-            logger.warning("Empty lecture text provided")
-            raise ValueError("Lecture text cannot be empty")
+            logger.warning("Передан пустой текст лекции")
+            raise ValueError("Текст лекции не может быть пустым")
 
-        logger.info(f"Generating lecture summary (input length: {len(lecture_text)} chars)")
-        logger.debug(f"Generation params: max_tokens={max_new_tokens}, temp={temperature}")
+        logger.info(f"Генерация конспекта лекции (длина входа: {len(lecture_text)} символов)")
+        logger.debug(f"Параметры генерации: max_tokens={max_new_tokens}, temp={temperature}")
 
-        # Construct prompt for the model
+        # Формирование промпта для модели
         prompt = self._build_summary_prompt(lecture_text)
 
         try:
-            # Tokenize input
+            # Токенизация входных данных
             inputs = self.tokenizer(
                 prompt,
                 return_tensors="pt",
                 truncation=True,
-                max_length=4096  # Prevent excessive input length
+                max_length=4096  # Предотвращение чрезмерной длины входа
             ).to(self.device)
 
             input_length = inputs["input_ids"].shape[1]
-            logger.debug(f"Input token count: {input_length}")
+            logger.debug(f"Количество входных токенов: {input_length}")
 
-            # Generate with torch.no_grad() to save memory
+            # Генерация с torch.no_grad() для экономии памяти
             with torch.no_grad():
                 outputs = self.model.generate(
                     **inputs,
@@ -364,37 +365,37 @@ class IntelligentTutor:
                     eos_token_id=self.tokenizer.eos_token_id,
                 )
 
-            # Decode and extract only the generated part
+            # Декодирование и извлечение только сгенерированной части
             full_output = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-            # Extract only the summary (remove the prompt)
+            # Извлечение только конспекта (удаление промпта)
             summary = self._extract_summary(full_output, prompt)
 
-            logger.info(f"Summary generated successfully (length: {len(summary)} chars)")
+            logger.info(f"Конспект успешно сгенерирован (длина: {len(summary)} символов)")
             return summary
 
         except torch.cuda.OutOfMemoryError as e:
-            logger.critical(f"CUDA OOM during generation: {e}")
+            logger.critical(f"CUDA OOM при генерации: {e}")
             torch.cuda.empty_cache()
             raise InferenceError(
-                "Out of memory during generation. Try reducing max_new_tokens.",
+                "Недостаточно памяти при генерации. Попробуйте уменьшить max_new_tokens.",
                 original_error=e
             ) from e
         except Exception as e:
-            logger.error(f"Generation failed: {e}")
+            logger.error(f"Ошибка генерации: {e}")
             raise InferenceError(
-                f"Failed to generate summary: {str(e)}",
+                f"Не удалось сгенерировать конспект: {str(e)}",
                 original_error=e
             ) from e
 
     def _build_summary_prompt(self, lecture_text: str) -> str:
-        """Build the prompt for summary generation.
+        """Формирование промпта для генерации конспекта.
 
-        Args:
-            lecture_text: The lecture text to summarize.
+        Аргументы:
+            lecture_text: Текст лекции для конспектирования.
 
-        Returns:
-            Formatted prompt string for the model.
+        Возвращает:
+            Отформатированную строку промпта для модели.
         """
         return (
             "Сделай краткий структурированный конспект лекции для студента техникума. "
@@ -404,16 +405,16 @@ class IntelligentTutor:
         )
 
     def _extract_summary(self, full_output: str, prompt: str) -> str:
-        """Extract the generated summary from the full model output.
+        """Извлечение сгенерированного конспекта из полного вывода модели.
 
-        Args:
-            full_output: The complete model output including prompt.
-            prompt: The original prompt string.
+        Аргументы:
+            full_output: Полный вывод модели, включая промпт.
+            prompt: Исходная строка промпта.
 
-        Returns:
-            The extracted summary without the prompt.
+        Возвращает:
+            Извлечённый конспект без промпта.
         """
-        # Simple extraction: remove the prompt part
+        # Простое извлечение: удаление части с промптом
         if prompt in full_output:
             return full_output.replace(prompt, "").strip()
         return full_output.strip()
@@ -425,37 +426,37 @@ class IntelligentTutor:
         *,
         difficulty: str = "medium",
     ) -> str:
-        """Generate a self-assessment quiz based on lecture content.
+        """Генерация теста для самопроверки по содержанию лекции.
 
-        Creates multiple-choice questions to help students test their
-        understanding of the lecture material.
+        Создаёт вопросы с выбором ответа для помощи студентам в проверке
+        понимания материала лекции.
 
-        Args:
-            lecture_text: The lecture text to generate questions from.
-            num_questions: Number of questions to generate. Default: 5.
-            difficulty: Difficulty level - "easy", "medium", or "hard". Default: "medium".
+        Аргументы:
+            lecture_text: Текст лекции для генерации вопросов.
+            num_questions: Количество вопросов для генерации. По умолчанию: 5.
+            difficulty: Уровень сложности - "easy", "medium" или "hard". По умолчанию: "medium".
 
-        Returns:
-            A formatted quiz with questions and answer options.
+        Возвращает:
+            Отформатированный тест с вопросами и вариантами ответов.
 
-        Raises:
-            InferenceError: If generation fails.
-            ValueError: If parameters are invalid.
+        Исключения:
+            InferenceError: Если генерация не удалась.
+            ValueError: Если параметры некорректны.
 
-        Note:
-            This method is currently in development. Quiz quality may vary.
+        Примечание:
+            Метод находится в разработке. Качество тестов может варьироваться.
         """
-        # TODO: Implement quiz generation with answer key
-        # TODO: Add support for different question types (open-ended, matching)
-        logger.warning("Quiz generation is in development - results may be suboptimal")
+        # TODO: Реализовать генерацию тестов с ключами ответов
+        # TODO: Добавить поддержку разных типов вопросов (открытые, на соответствие)
+        logger.warning("Генерация тестов в разработке - результаты могут быть неоптимальными")
 
         if difficulty not in ("easy", "medium", "hard"):
-            raise ValueError(f"Invalid difficulty: {difficulty}. Must be 'easy', 'medium', or 'hard'")
+            raise ValueError(f"Некорректный уровень сложности: {difficulty}. Допустимо: 'easy', 'medium' или 'hard'")
 
         if num_questions < 1 or num_questions > 20:
-            raise ValueError("num_questions must be between 1 and 20")
+            raise ValueError("Количество вопросов должно быть от 1 до 20")
 
-        logger.info(f"Generating quiz: {num_questions} questions, difficulty: {difficulty}")
+        logger.info(f"Генерация теста: {num_questions} вопросов, сложность: {difficulty}")
 
         prompt = (
             f"Создай тест из {num_questions} вопросов (сложность: {difficulty}) "
@@ -475,43 +476,43 @@ class IntelligentTutor:
                 )
 
             quiz = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-            logger.info("Quiz generated successfully")
+            logger.info("Тест успешно сгенерирован")
             return quiz.replace(prompt, "").strip()
 
         except Exception as e:
-            logger.error(f"Quiz generation failed: {e}")
-            raise InferenceError(f"Failed to generate quiz: {e}", original_error=e) from e
+            logger.error(f"Ошибка генерации теста: {e}")
+            raise InferenceError(f"Не удалось сгенерировать тест: {e}", original_error=e) from e
 
     def chat(
         self,
         user_message: str,
         conversation_history: Optional[list[dict[str, str]]] = None,
     ) -> str:
-        """Engage in a conversational dialogue with the tutor.
+        """Ведение диалога с тьютором.
 
-        Allows students to ask follow-up questions about lecture material
-        in a natural conversational format.
+        Позволяет студентам задавать уточняющие вопросы по материалу лекции
+        в естественном разговорном формате.
 
-        Args:
-            user_message: The student's question or message.
-            conversation_history: List of previous messages in the format
+        Аргументы:
+            user_message: Вопрос или сообщение студента.
+            conversation_history: Список предыдущих сообщений в формате
                 [{"role": "user/assistant", "content": "..."}].
 
-        Returns:
-            The tutor's response to the student's message.
+        Возвращает:
+            Ответ тьютора на сообщение студента.
 
-        Note:
-            Conversation context is limited by the model's context window.
+        Примечание:
+            Контекст разговора ограничен контекстным окном модели.
         """
-        # TODO: Implement proper conversation memory with summarization
-        # TODO: Add conversation persistence for session management
+        # TODO: Реализовать правильную память диалога с суммаризацией
+        # TODO: Добавить сохранение диалогов для управления сессиями
 
         if not user_message.strip():
-            raise ValueError("User message cannot be empty")
+            raise ValueError("Сообщение пользователя не может быть пустым")
 
-        logger.debug(f"Processing chat message: {user_message[:50]}...")
+        logger.debug(f"Обработка сообщения чата: {user_message[:50]}...")
 
-        # Build conversation context
+        # Формирование контекста диалога
         if conversation_history is None:
             conversation_history = []
 
@@ -519,7 +520,7 @@ class IntelligentTutor:
             {"role": "user", "content": user_message}
         ]
 
-        # Format as chat template (Mistral format)
+        # Форматирование в шаблон чата (формат Mistral)
         prompt = self.tokenizer.apply_chat_template(
             messages,
             tokenize=False,
@@ -538,27 +539,27 @@ class IntelligentTutor:
                 )
 
             response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-            # Extract only the assistant's response
+            # Извлечение только ответа ассистента
             if "[/INST]" in response:
                 response = response.split("[/INST]")[-1].strip()
 
-            logger.debug(f"Chat response generated: {len(response)} chars")
+            logger.debug(f"Ответ чата сгенерирован: {len(response)} символов")
             return response
 
         except Exception as e:
-            logger.error(f"Chat generation failed: {e}")
-            raise InferenceError(f"Failed to generate response: {e}", original_error=e) from e
+            logger.error(f"Ошибка генерации ответа чата: {e}")
+            raise InferenceError(f"Не удалось сгенерировать ответ: {e}", original_error=e) from e
 
 
 def setup_logging(level: str = "INFO") -> None:
-    """Configure logging for the tutor module.
+    """Настройка логирования для модуля тьютора.
 
-    Sets up a structured logging configuration with timestamp, level,
-    and module information.
+    Устанавливает структурированную конфигурацию логирования с временной меткой,
+    уровнем и информацией о модуле.
 
-    Args:
-        level: Logging level - "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL".
-            Default: "INFO".
+    Аргументы:
+        level: Уровень логирования - "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL".
+            По умолчанию: "INFO".
     """
     log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     date_format = "%Y-%m-%d %H:%M:%S"
@@ -572,43 +573,43 @@ def setup_logging(level: str = "INFO") -> None:
             logging.FileHandler("tutor.log", encoding="utf-8"),
         ]
     )
-    logger.info(f"Logging configured at {level} level")
+    logger.info(f"Логирование настроено на уровень {level}")
 
 
 def main() -> None:
-    """Main entry point for running the tutor from command line.
+    """Главная точка входа для запуска тьютора из командной строки.
 
-    Demonstrates basic usage of the IntelligentTutor class with
-    a sample lecture text.
+    Демонстрирует базовое использование класса IntelligentTutor с
+    примером текста лекции.
     """
-    # Load configuration from environment
+    # Загрузка конфигурации из переменных окружения
     log_level = os.getenv("LOG_LEVEL", "INFO")
     setup_logging(log_level)
 
     logger.info("=" * 60)
-    logger.info("Starting Intelligent Tutor System")
+    logger.info("Запуск системы интеллектуального тьютора")
     logger.info("=" * 60)
 
-    # Model configuration
-    # For prototype (Hugging Face):
+    # Конфигурация модели
+    # Для прототипа (Hugging Face):
     model_path = os.getenv(
         "MODEL_PATH",
         "mistralai/Mistral-Small-24B-Instruct-2501"
     )
-    # For local deployment:
+    # Для локального развёртывания:
     # model_path = os.getenv("MODEL_PATH", "/mnt/models/mistral-small-24b")
 
     adapter_path = os.getenv("ADAPTER_PATH", None)
     # adapter_path = os.getenv("ADAPTER_PATH", "./lora-tutors-adapter")
 
     try:
-        # Initialize tutor
+        # Инициализация тьютора
         tutor = IntelligentTutor(
             base_model_id=model_path,
             adapter_path=adapter_path,
         )
 
-        # Sample lecture for demonstration
+        # Пример лекции для демонстрации
         test_lecture = (
             "Тема: Основы промышленной автоматизации. "
             "Промышленная автоматизация — это применение систем управления "
@@ -617,7 +618,7 @@ def main() -> None:
             "датчики, исполнительные механизмы, SCADA-системы."
         )
 
-        logger.info("Generating demonstration summary...")
+        logger.info("Генерация демонстрационного конспекта...")
         print("\n" + "=" * 60)
         print("ДЕМОНСТРАЦИЯ: Генерация конспекта лекции")
         print("=" * 60 + "\n")
@@ -626,21 +627,21 @@ def main() -> None:
         print(result)
 
         print("\n" + "=" * 60)
-        logger.info("Demonstration completed successfully")
+        logger.info("Демонстрация успешно завершена")
 
     except ModelLoadError as e:
-        logger.critical(f"Failed to load model: {e}")
+        logger.critical(f"Ошибка загрузки модели: {e}")
         if e.original_error:
-            logger.debug(f"Original error: {e.original_error}")
+            logger.debug(f"Исходная ошибка: {e.original_error}")
         sys.exit(1)
     except InferenceError as e:
-        logger.error(f"Inference failed: {e}")
+        logger.error(f"Ошибка инференса: {e}")
         sys.exit(1)
     except KeyboardInterrupt:
-        logger.info("Interrupted by user")
+        logger.info("Прервано пользователем")
         sys.exit(0)
     except Exception as e:
-        logger.exception(f"Unexpected error: {e}")
+        logger.exception(f"Непредвиденная ошибка: {e}")
         sys.exit(1)
 
 
