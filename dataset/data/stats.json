@@ -1,1 +1,38 @@
-ewogICJ2ZXJzaW9uIjogIjMuMCIsCiAgInNvdXJjZV9sZWN0dXJlcyI6IDUwLAogICJzdWJqZWN0cyI6IHsKICAgICJpbmR1c3RyaWFsX2F1dG8iOiAzMCwKICAgICJtZWFzdXJlbWVudF9zeXN0ZW1zIjogMjAKICB9LAogICJ0b3RhbF9yZWNvcmRzIjogNjIwLAogICJzcGxpdHMiOiB7CiAgICAidHJhaW4iOiB7CiAgICAgICJjb3VudCI6IDQ5MiwKICAgICAgInJhdGlvIjogNzkuNAogICAgfSwKICAgICJ2YWwiOiB7CiAgICAgICJjb3VudCI6IDU5LAogICAgICAicmF0aW8iOiA5LjUKICAgIH0sCiAgICAidGVzdCI6IHsKICAgICAgImNvdW50IjogNjksCiAgICAgICJyYXRpbyI6IDExLjEKICAgIH0KICB9LAogICJ0YXNrX3R5cGVzIjogewogICAgInN1bW1hcnlfYmFzaWMiOiA3MSwKICAgICJzdW1tYXJ5X2FkdmFuY2VkIjogNTAsCiAgICAicXVpel9vcGVuIjogNTcsCiAgICAicXVpel9tdWx0aXBsZV9jaG9pY2UiOiA2OSwKICAgICJleHBsYW5hdGlvbiI6IDE0MCwKICAgICJzdGVwX2J5X3N0ZXAiOiAzNiwKICAgICJlcnJvcl9hbmFseXNpcyI6IDI2LAogICAgInByYWN0aWNhbF90YXNrIjogNTAsCiAgICAiZXhhbV9wcmVwIjogNzEsCiAgICAiYWRhcHRhdGlvbl9vdnoiOiA1MAogIH0sCiAgInF1YWxpdHkiOiB7CiAgICAibGxtX2dlbmVyYXRlZCI6IDE2NSwKICAgICJ0ZW1wbGF0ZV9nZW5lcmF0ZWQiOiA0NTUsCiAgICAibGxtX3RvcGljc19jb3ZlcmVkIjogMTMsCiAgICAicGlwZWxpbmUiOiBbCiAgICAgICJwcmVwYXJlX2RhdGFzZXQiLAogICAgICAiY2xlYW5fZGF0YSIsCiAgICAgICJub3JtYWxpemUiLAogICAgICAic3BsaXRfZGF0YXNldCIKICAgIF0KICB9Cn0=
+{
+  "version": "4.0",
+  "source_lectures": 68,
+  "subjects": {
+    "industrial_auto": 40,
+    "measurement_systems": 28
+  },
+  "total_records": 648,
+  "splits": {
+    "train": {
+      "count": 648
+    },
+    "val": {
+      "count": 59
+    },
+    "test": {
+      "count": 69
+    }
+  },
+  "task_types": {
+    "explanation": 140,
+    "summary_basic": 74,
+    "quiz_multiple_choice": 70,
+    "exam_prep": 67,
+    "quiz_open": 58,
+    "step_by_step": 56,
+    "adaptation_ovz": 51,
+    "summary_advanced": 51,
+    "practical_task": 51,
+    "error_analysis": 30
+  },
+  "difficulty": {
+    "basic": 161,
+    "intermediate": 442,
+    "advanced": 45
+  },
+  "note": "train=648 (492+156 new). Re-split recommended."
+}
