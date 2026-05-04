@@ -1,0 +1,119 @@
+{
+  "input_count": 180,
+  "seed": 42,
+  "splits": {
+    "train": {
+      "count": 144,
+      "ratio": 80.0
+    },
+    "val": {
+      "count": 18,
+      "ratio": 10.0
+    },
+    "test": {
+      "count": 18,
+      "ratio": 10.0
+    }
+  },
+  "stratification": {
+    "adaptation_ovz": {
+      "train": {
+        "count": 16,
+        "pct": 11.1
+      },
+      "val": {
+        "count": 2,
+        "pct": 11.1
+      },
+      "test": {
+        "count": 2,
+        "pct": 11.1
+      }
+    },
+    "chat_explanation": {
+      "train": {
+        "count": 32,
+        "pct": 22.2
+      },
+      "val": {
+        "count": 4,
+        "pct": 22.2
+      },
+      "test": {
+        "count": 4,
+        "pct": 22.2
+      }
+    },
+    "explanation": {
+      "train": {
+        "count": 32,
+        "pct": 22.2
+      },
+      "val": {
+        "count": 4,
+        "pct": 22.2
+      },
+      "test": {
+        "count": 4,
+        "pct": 22.2
+      }
+    },
+    "quiz_multiple_choice": {
+      "train": {
+        "count": 16,
+        "pct": 11.1
+      },
+      "val": {
+        "count": 2,
+        "pct": 11.1
+      },
+      "test": {
+        "count": 2,
+        "pct": 11.1
+      }
+    },
+    "quiz_open": {
+      "train": {
+        "count": 16,
+        "pct": 11.1
+      },
+      "val": {
+        "count": 2,
+        "pct": 11.1
+      },
+      "test": {
+        "count": 2,
+        "pct": 11.1
+      }
+    },
+    "summary_advanced": {
+      "train": {
+        "count": 16,
+        "pct": 11.1
+      },
+      "val": {
+        "count": 2,
+        "pct": 11.1
+      },
+      "test": {
+        "count": 2,
+        "pct": 11.1
+      }
+    },
+    "summary_basic": {
+      "train": {
+        "count": 16,
+        "pct": 11.1
+      },
+      "val": {
+        "count": 2,
+        "pct": 11.1
+      },
+      "test": {
+        "count": 2,
+        "pct": 11.1
+      }
+    }
+  },
+  "duplicates_between_splits": 0
+}
