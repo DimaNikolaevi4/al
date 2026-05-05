@@ -1,7 +1,7 @@
 # 📋 Чеклист проекта: Интеллектуальный тьютор на базе LLM для СПО
 
 **Файл:** `CHECKLIST.md`
-**Обновлено:** 05 мая 2026
+**Обновлено:** 06 мая 2026
 **Проект:** ИИ-тьютор для среднего профессионального образования на базе Mistral Small 3.1 (24B)
 **Стек:** Python 3.10+ · PyTorch 2.0+ · Transformers · PEFT (LoRA) · FastAPI · Moodle
 **Репозиторий:** https://git.qubu.ai/REDACTED_USERNAME/ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-dlya-spo
@@ -12,17 +12,17 @@
 
 | Раздел | ✅ Сделано | 🔶 В процессе | ❌ Не начато | 🔒 Заблокировано |
 |--------|:----------:|:-------------:|:------------:|:----------------:|
-| 1. Управление и организация | 10 | 0 | 1 | 0 |
-| 2. Инфраструктура | 6 | 2 | 2 | 0 |
-| 3. Программная архитектура | 13 | 1 | 0 | 0 |
-| 4. Данные | 16 | 0 | 0 | 0 |
-| 5. Интеграция с Moodle | 7 | 0 | 0 | 0 |
-| 6. Дообучение модели | 0 | 0 | 10 | 0 |
-| 7. Пилотное внедрение | 2 | 0 | 6 | 0 |
-| 8. Масштабирование | 2 | 0 | 5 | 0 |
-| **Итого** | **56** | **3** | **21** | **0** |
+| 1. Управление и организация | 18 | 2 | 0 | 0 |
+| 2. Инфраструктура | 6 | 3 | 9 | 0 |
+| 3. Программная архитектура | 20 | 1 | 0 | 0 |
+| 4. Данные | 8 | 1 | 3 | 0 |
+| 5. Интеграция с Moodle | 10 | 0 | 1 | 0 |
+| 6. Дообучение модели | 0 | 0 | 14 | 0 |
+| 7. Пилотное внедрение | 2 | 3 | 5 | 0 |
+| 8. Масштабирование | 3 | 4 | 4 | 0 |
+| **Итого** | **67** | **14** | **36** | **0** |
 
-**Прогресс выполнения:** [||||||||||||.....] 70%
+**Прогресс выполнения:** [||||||||........] 57%
 
 ---
 
@@ -175,9 +175,9 @@
 | # | Задача | Статус | Примечание |
 |---|--------|:------:|-------------|
 | 4.2.1 | Создание формата JSONL для обучения (instruction, input, output) | ✅ | Формат: `messages` (system/user/assistant) + `metadata` (task_type, subject, difficulty, topic, source, source_file). Файлы: `dataset/data/*.jsonl`. 771 запись, валидация PASSED. |
-| 4.2.2 | Ручная разметка первых 50 примеров (Gold Standard) | ❌ | |
+| 4.2.2 | Ручная разметка первых 50 примеров (Gold Standard) | ❌ | Руководство по разметке подготовлено: [`docs/gold_standard_guidelines.md`](docs/gold_standard_guidelines.md). Распределение: 25 ПА + 25 ИС, 4 типа задач. Ручная работа преподавателей (~4 недели). |
 | 4.2.3 | Генерация синтетических данных на базе Golden Set | 🔶 | 57 LLM-сгенерированных записей для measurement_systems (IoT, машинное зрение, наносенсоры). 93% шаблонные. |
-| 4.2.4 | Валидация разметки (проверка второго уровня) | ❌ | |
+| 4.2.4 | Валидация разметки (проверка второго уровня) | ❌ | Скрипт автоматической валидации готов: [`scripts/validate_annotations.py`](scripts/validate_annotations.py). Проверки: формат, контент, дубликаты, баланс, противоречия. Запуск: `python scripts/validate_annotations.py --data-dir dataset/data/`. Ожидает Gold Standard. |
 | 4.2.5 | Разделение на Train/Validation/Test выборки (80/10/10) | ✅ | train: 613 (79.5%), val: 73 (9.5%), test: 85 (11.0%). Сумма = 771 ✅. ⚠️ Перекос в val/test: industrial_auto 80%, measurement_systems 20% — рекомендуется стратификация. |
 | 4.2.6 | Загрузка датасета в папку /data/raw на сервере | ✅ | `scripts/deploy_dataset.sh`: копирование + JSONL-валидация + статистика. `scripts/backup.sh`: бэкап адаптеров, логов, конфигурации. |
 
@@ -252,8 +252,8 @@
 |---|--------|:------:|-------------|
 | 7.1.1 | Создание инструкции «Как пользоваться ИИ-тьютором» для студентов | ✅ | Черновик: [`docs/draft_student_instruction.md`](docs/draft_student_instruction.md) (~3600 слов). Разделы: доступ, генерация конспекта, чат, тесты, правила, ошибки ИИ, FAQ (12 Q&A), troubleshooting. |
 | 7.1.2 | Создание инструкции для преподавателей по настройке курсов | ✅ | Черновик: [`docs/draft_teacher_instruction.md`](docs/draft_teacher_instruction.md) (~4100 слов). Разделы: архитектура, подготовка материалов, работа в Moodle, проверка ИИ-вывода, мониторинг, 10 методрекомендаций, FAQ (10 Q&A). |
-| 7.1.3 | Проведение семинара для педагогического состава | ❌ | |
-| 7.1.4 | Создание группы техподдержки (старосты групп) | ❌ | |
+| 7.1.3 | Проведение семинара для педагогического состава | 🔶 | План семинара (3 часа, 8 блоков): [`docs/draft_seminar_plan.md`](docs/draft_seminar_plan.md). Включает: демо, практикум, этика ИИ, анкету обратной связи. Семинар не проведён (ожидает сервер). |
+| 7.1.4 | Создание группы техподдержки (старосты групп) | 🔶 | Руководство для старост готово: [`docs/draft_student_support_guide.md`](docs/draft_student_support_guide.md). 8 типичных проблем + решения, иерархия эскалации, чек-лист, карманная карточка. Группа не создана. |
 
 ### 7.2 Эксплуатация
 
@@ -261,7 +261,7 @@
 |---|--------|:------:|-------------|
 | 7.2.1 | Запуск курса с ИИ-тьютором для группы 15.02.14 | ❌ | Планируется на Q4 2026. |
 | 7.2.2 | Сбор логов использования (кто, когда, сколько раз) | ❌ | |
-| 7.2.3 | Сбор обратной связи (Google Forms / Опросники) | ❌ | |
+| 7.2.3 | Сбор обратной связи (Google Forms / Опросники) | 🔶 | Шаблон анкеты (17 вопросов, 7 разделов): [`docs/draft_feedback_form.md`](docs/draft_feedback_form.md). Шкалы 1-5 + NPS, готов к реализации в Google Forms. Сбор не начат. |
 | 7.2.4 | Анализ типичных ошибок модели (Edge cases) | ❌ | |
 | 7.2.5 | Хотфикс критических багов в UI/Backend | ❌ | |
 | 7.2.6 | Сравнение результатов промежуточных аттестаций с прошлым годом | ❌ | |
@@ -276,8 +276,8 @@
 | # | Задача | Статус | Примечание |
 |---|--------|:------:|-------------|
 | 8.1.1 | Сбор метрик эффективности (время преподавателей, баллы студентов) | ❌ | |
-| 8.1.2 | Подготовка финального отчёта по проекту | ❌ | |
-| 8.1.3 | Расчёт ROI (возврат инвестиций) | ❌ | |
+| 8.1.2 | Подготовка финального отчёта по проекту | 🔶 | Шаблон отчёта (12 разделов): [`docs/draft_final_report.md`](docs/draft_final_report.md). Предзаполнен: цели, архитектура, датасет, бюджет. Требует финализации после пилота. |
+| 8.1.3 | Расчёт ROI (возврат инвестиций) | ✅ | Расчёт выполнен: [`docs/roi_calculation.md`](docs/roi_calculation.md). 3 сценария: пессимистичный (ROI 30.6%), базовый (ROI 120.6%, окупаемость ~2.3 года), оптимистичный (ROI 209.2%). CAPEX 2.25M руб, OPEX ~100K/год. |
 | 8.1.4 | Финансовая отчётность по закупкам | ❌ | |
 
 ### 8.2 Трансфер знаний
@@ -285,8 +285,8 @@
 | # | Задача | Статус | Примечание |
 |---|--------|:------:|-------------|
 | 8.2.1 | Написание методических рекомендаций для других техникумов | ✅ | Черновик: [`docs/draft_methodology_recommendations.md`](docs/draft_methodology_recommendations.md) (~6500 слов). 9 шагов внедрения, сравнение 8 LLM, шаблоны бюджета и таймлайна, 12 типичных ошибок, 3 приложения. |
-| 8.2.2 | Запись видео-урока по настройке сервера | ❌ | |
-| 8.2.3 | Публикация статьи в профессиональном журнале | ❌ | |
+| 8.2.2 | Запись видео-урока по настройке сервера | 🔶 | Сценарий (~30 мин, 10 сегментов): [`docs/draft_video_script.md`](docs/draft_video_script.md). С таймкодами, текстом диктора, командами, NVIDIA+AMD ветки. Съёмка не начата. |
+| 8.2.3 | Публикация статьи в профессиональном журнале | 🔶 | Черновик статьи (~6100 слов): [`docs/draft_journal_article.md`](docs/draft_journal_article.md). 9 разделов, сравнительная таблица (4 LLM), 19 источников, Mermaid-диаграмма. Требует рецензирования и отправки в журнал. |
 | 8.2.4 | Распространение кода под Open License (Apache 2.0) | ✅ | Лицензия уже указана в README.md и заголовках файлов. |
 
 ### 8.3 Поддержка (Future)
@@ -309,8 +309,45 @@ ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-
 ├── CHECKLIST.md          # Этот документ (чеклист проекта)
 ├── README.md             # Документация проекта
 ├── requirements.txt      # Зависимости Python
+├── Dockerfile            # Multi-stage Docker-образ (GPU-агностичный)
+├── docker-compose.yml    # Production: api + celery-worker + redis
+├── docker-compose.dev.yml # Dev-overlay с hot-reload
 ├── test_tutor.py         # Unit-тесты (pytest)
 ├── tutor.py              # Основной модуль ИИ-тьютора
+├── train.py              # Скрипт дообучения (SFTTrainer, QLoRA)
+├── evaluate.py           # Скрипт оценки качества генерации
+├── lora_config.py        # Конфигурация QLoRA (3 пресета)
+├── data_collator.py      # SFT Data Collator (chat template)
+├── api/                  # FastAPI сервер
+│   ├── main.py           # Приложение с lifespan, CORS, degraded mode
+│   ├── config.py         # Pydantic Settings (.env)
+│   ├── models.py         # 12 Pydantic-схем
+│   ├── celery_app.py     # Celery + singleton-модель
+│   ├── tasks.py          # Утилиты async-задач
+│   └── routes/           # Эндпоинты
+│       ├── generate.py       # Sync: summary, test, chat
+│       ├── async_generate.py # Async: submit + status
+│       └── system.py         # Health, info, stats
+├── moodle/               # Moodle-плагин
+│   ├── docs/README_MOODLE.md # Документация интеграции
+│   └── local/aitutor/        # Local Plugin
+│       ├── version.php, settings.php, ajax.php
+│       ├── classes/service.php
+│       ├── db/install.xml, access.php
+│       ├── amd/src/aitutor_block.js
+│       ├── lang/ru/, lang/en/
+│       └── block_aitutor/    # Блок «ИИ Тьютор»
+├── monitoring/           # Prometheus + Grafana
+│   ├── prometheus.yml
+│   └── grafana_dashboards/ai_tutor_overview.json
+├── scripts/              # Скрипты
+│   ├── harden_server.sh      # Базовый hardening (idempotent)
+│   ├── detect_gpu.sh         # Автоопределение GPU (NVIDIA/AMD)
+│   ├── deploy_dataset.sh     # Деплой датасета + валидация
+│   ├── deploy.sh             # Деплой приложения + smoke test
+│   ├── smoke_test.py         # Smoke test API
+│   ├── backup.sh             # Бэкап адаптеров и логов
+│   └── validate_annotations.py # Валидация разметки датасета
 ├── dataset/              # Датасет для дообучения (v2.0)
 │   ├── CHECKLIST.md      # Чеклист создания датасета (96%)
 │   ├── raw/              # Сырые лекции (67 Markdown-файлов)
@@ -328,8 +365,24 @@ ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-
 │   ├── analyze_balance.py   # Анализ баланса
 │   ├── split_dataset.py     # Разбиение на сплиты
 │   └── validate.py          # Валидация формата
-└── docs/
-    └── Qubu_AI_Tutor_Project.pdf  # Техническое задание
+└── docs/                 # Документация и черновики
+    ├── Qubu_AI_Tutor_Project.pdf       # Техническое задание
+    ├── draft_portal_publication.md      # 1.2.8 Публикация на портале
+    ├── draft_student_ai_agreement.md   # 1.3.3 Соглашение студентов
+    ├── draft_teacher_materials_agreement.md # 1.3.4 Соглашение преподавателей
+    ├── draft_student_instruction.md    # 7.1.1 Инструкция для студентов
+    ├── draft_teacher_instruction.md    # 7.1.2 Инструкция для преподавателей
+    ├── draft_seminar_plan.md           # 7.1.3 План семинара
+    ├── draft_student_support_guide.md  # 7.1.4 Руководство для старост
+    ├── draft_feedback_form.md          # 7.2.3 Анкета обратной связи
+    ├── draft_final_report.md           # 8.1.2 Шаблон финального отчёта
+    ├── roi_calculation.md              # 8.1.3 Расчёт ROI
+    ├── draft_methodology_recommendations.md # 8.2.1 Методрекомендации
+    ├── draft_video_script.md           # 8.2.2 Сценарий видео
+    ├── draft_journal_article.md        # 8.2.3 Черновик статьи
+    ├── gold_standard_guidelines.md     # 4.2.2 Руководство по Gold Standard
+    ├── setup_nvidia.md                 # 2.3.1 Установка NVIDIA
+    └── setup_amd.md                    # 2.3.1 Установка AMD
 ```
 
 ---
