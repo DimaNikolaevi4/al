@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/aitutor/db" VERSION="20260501" COMMENT="Database tables for the AI Tutor plugin.">
+  <TABLES>
+    <!-- Stores every request made through the plugin. -->
+    <TABLE NAME="local_aitutor_requests" COMMENT="Individual AI tutor requests and their results.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="request_type" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="summary" SEQUENCE="false" COMMENT="summary, quiz, or chat"/>
+        <FIELD NAME="input_text" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The lecture text or user message sent to the API"/>
+        <FIELD NAME="task_id" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Async task ID returned by the API"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="pending" SEQUENCE="false" COMMENT="pending, processing, complete, failed"/>
+        <FIELD NAME="result_text" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON-encoded result returned by the API"/>
+        <FIELD NAME="error_message" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Error message if the request failed"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="fk_courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_task_id" UNIQUE="false" FIELDS="task_id"/>
+        <INDEX NAME="ix_status" UNIQUE="false" FIELDS="status"/>
+        <INDEX NAME="ix_request_type" UNIQUE="false" FIELDS="request_type"/>
+        <INDEX NAME="ix_timecreated" UNIQUE="false" FIELDS="timecreated"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- Audit log for plugin settings changes. -->
+    <TABLE NAME="local_aitutor_settings_log" COMMENT="Audit log of plugin settings changes.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="setting_name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="old_value" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="new_value" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_setting_name" UNIQUE="false" FIELDS="setting_name"/>
+        <INDEX NAME="ix_timestamp" UNIQUE="false" FIELDS="timestamp"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

@@ -1,0 +1,230 @@
+/* ==========================================================================
+   AI Tutor Block — Styles
+   ========================================================================== */
+
+/* ---------- Buttons ---------- */
+.aitutor-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.aitutor-btn {
+    display: block;
+    width: 100%;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    color: #fff;
+}
+
+.aitutor-btn-summary {
+    background-color: #3b82f6;
+}
+
+.aitutor-btn-summary:hover {
+    background-color: #2563eb;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
+
+.aitutor-btn-quiz {
+    background-color: #8b5cf6;
+}
+
+.aitutor-btn-quiz:hover {
+    background-color: #7c3aed;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+}
+
+.aitutor-btn-chat {
+    background-color: #10b981;
+}
+
+.aitutor-btn-chat:hover {
+    background-color: #059669;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+}
+
+/* ---------- Labels & Textareas ---------- */
+.aitutor-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #374151;
+}
+
+.aitutor-textarea {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+}
+
+.aitutor-textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* ---------- Difficulty row ---------- */
+.aitutor-difficulty-row {
+    margin-top: 12px;
+}
+
+.aitutor-difficulty-row select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+/* ---------- Status messages ---------- */
+.aitutor-status {
+    margin-top: 12px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.aitutor-status-processing {
+    background-color: #eff6ff;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+.aitutor-status-complete {
+    background-color: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.aitutor-status-error {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+/* ---------- Result display ---------- */
+.aitutor-result {
+    margin-top: 12px;
+}
+
+.aitutor-result-text {
+    padding: 12px 16px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #1f2937;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* ---------- Quiz result ---------- */
+.aitutor-quiz-result {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.aitutor-question {
+    padding: 12px 16px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+}
+
+.aitutor-question p {
+    margin: 4px 0;
+}
+
+.aitutor-question p:first-child {
+    margin-top: 0;
+}
+
+.aitutor-option {
+    padding-left: 20px;
+    color: #4b5563;
+}
+
+.aitutor-answer {
+    margin-top: 6px;
+    font-weight: 600;
+    color: #166534;
+}
+
+/* ---------- Chat history ---------- */
+.aitutor-chat-history {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+    padding: 8px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+}
+
+.aitutor-chat-history .aitutor-msg {
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.aitutor-chat-history .aitutor-msg-user {
+    background-color: #dbeafe;
+    text-align: right;
+}
+
+.aitutor-chat-history .aitutor-msg-ai {
+    background-color: #dcfce7;
+    text-align: left;
+}
+
+/* ---------- Loading spinner ---------- */
+.aitutor-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #3b82f6;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: aitutor-spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+@keyframes aitutor-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ---------- Send button in modal footer ---------- */
+.aitutor-send-btn {
+    margin-right: auto;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+    .aitutor-btn {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+}

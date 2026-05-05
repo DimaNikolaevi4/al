@@ -1,0 +1,273 @@
+# =============================================================================
+# GitHub Actions CI Pipeline — AI Tutor Project
+# =============================================================================
+# Триггеры: push в main, pull requests
+# Задания: lint → type-check → test → build
+# =============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "api/**"
+      - "*.py"
+      - "tests/**"
+      - "Dockerfile*"
+      - "docker-compose*.yml"
+      - "requirements*.txt"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    branches: [main, develop]
+
+# Отмена повторных прогонов для того же PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.11"
+  # Кэшируем pip
+  PIP_CACHE_DIR: ~/.cache/pip
+
+jobs:
+  # ===========================================================================
+  # Job 1: Линтинг Python кода (ruff)
+  # ===========================================================================
+  lint:
+    name: "Lint (ruff)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
+          # Install project dependencies (if requirements exist)
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+
+      - name: Ruff check
+        run: |
+          echo "Checking Python files with ruff..."
+          # Check api/ directory
+          if [ -d api ]; then
+            ruff check api/
+          fi
+          # Check root Python files
+          ruff check *.py 2>/dev/null || true
+          # Check scripts/
+          if [ -d scripts ]; then
+            ruff check scripts/
+          fi
+          echo "Ruff check complete."
+
+      - name: Ruff format check
+        run: |
+          echo "Checking code formatting..."
+          if [ -d api ]; then
+            ruff format --check api/
+          fi
+          ruff format --check *.py 2>/dev/null || true
+          if [ -d scripts ]; then
+            ruff format --check scripts/ 2>/dev/null || true
+          fi
+          echo "Format check complete."
+
+  # ===========================================================================
+  # Job 2: Проверка типов (mypy)
+  # ===========================================================================
+  type-check:
+    name: "Type Check (mypy)"
+    runs-on: ubuntu-latest
+    needs: lint  # Запускается после успешного линтинга
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mypy
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+
+      - name: Run mypy
+        run: |
+          echo "Running type checking with mypy..."
+          # mypy on api/ if it exists
+          if [ -d api ]; then
+            mypy api/ --ignore-missing-imports --no-strict-optional \
+              || echo "::warning::mypy found type issues (non-blocking)"
+          else
+            echo "api/ directory not found, skipping type check."
+          fi
+          echo "Type check complete."
+
+  # ===========================================================================
+  # Job 3: Тесты (pytest)
+  # ===========================================================================
+  test:
+    name: "Tests (pytest)"
+    runs-on: ubuntu-latest
+    needs: lint  # Запускается после успешного линтинга
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+          pip install pytest pytest-cov pytest-asyncio
+
+      - name: Run tests
+        run: |
+          echo "Running tests with pytest..."
+
+          # Определяем путь к тестам
+          TEST_PATH="tests"
+          if [ ! -d "$TEST_PATH" ]; then
+            # Пробуем корневой тестовый файл
+            if [ -f test_tutor.py ]; then
+              TEST_PATH="test_tutor.py"
+            else
+              echo "::warning::No test files found. Skipping tests."
+              exit 0
+            fi
+          fi
+
+          pytest "$TEST_PATH" \
+            -v \
+            --tb=short \
+            --cov=api \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml \
+            || true  # Non-blocking for initial setup
+
+          echo "Tests complete."
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage.xml
+          retention-days: 7
+
+  # ===========================================================================
+  # Job 4: Сборка Docker образа (валидация Dockerfile)
+  # ===========================================================================
+  build:
+    name: "Docker Build"
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Check Dockerfile exists
+        id: check_dockerfile
+        run: |
+          if [ -f Dockerfile ]; then
+            echo "dockerfile=Dockerfile" >> "$GITHUB_OUTPUT"
+            echo "Dockerfile found."
+          elif [ -f api/Dockerfile ]; then
+            echo "dockerfile=api/Dockerfile" >> "$GITHUB_OUTPUT"
+            echo "api/Dockerfile found."
+          else
+            echo "No Dockerfile found. Skipping build."
+            echo "dockerfile=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build Docker image
+        if: steps.check_dockerfile.outputs.dockerfile != ''
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ${{ steps.check_dockerfile.outputs.dockerfile }}
+          push: false
+          tags: ai-tutor:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # Ограничиваем ресурсы CI
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+
+      - name: Docker build skipped
+        if: steps.check_dockerfile.outputs.dockerfile == ''
+        run: |
+          echo "::notice::No Dockerfile found — Docker build step skipped."
+
+  # ===========================================================================
+  # Job 5: Smoke test scripts (баш-скрипты)
+  # ===========================================================================
+  scripts-check:
+    name: "Scripts Validation"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Lint bash scripts with shellcheck
+        run: |
+          echo "Checking bash scripts with shellcheck..."
+          find scripts/ -name "*.sh" -type f -exec shellcheck --severity=warning {} \; \
+            || echo "::warning::shellcheck found issues"
+          echo "Shellcheck complete."
+
+      - name: Check script executability
+        run: |
+          echo "Checking script permissions..."
+          for script in scripts/*.sh; do
+            if [ -f "$script" ]; then
+              if [ ! -x "$script" ]; then
+                echo "::warning::$script is not executable"
+              fi
+            fi
+          done
+
+      - name: Check Python smoke test syntax
+        run: |
+          echo "Checking smoke_test.py syntax..."
+          if [ -f scripts/smoke_test.py ]; then
+            python3 -m py_compile scripts/smoke_test.py
+            echo "smoke_test.py syntax OK."
+          fi

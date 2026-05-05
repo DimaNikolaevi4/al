@@ -13,16 +13,16 @@
 | Раздел | ✅ Сделано | 🔶 В процессе | ❌ Не начато | 🔒 Заблокировано |
 |--------|:----------:|:-------------:|:------------:|:----------------:|
 | 1. Управление и организация | 10 | 0 | 1 | 0 |
-| 2. Инфраструктура | 4 | 4 | 2 | 0 |
-| 3. Программная архитектура | 12 | 1 | 1 | 0 |
-| 4. Данные | 15 | 0 | 1 | 0 |
-| 5. Интеграция с Moodle | 5 | 0 | 2 | 0 |
+| 2. Инфраструктура | 6 | 2 | 2 | 0 |
+| 3. Программная архитектура | 13 | 1 | 0 | 0 |
+| 4. Данные | 16 | 0 | 0 | 0 |
+| 5. Интеграция с Moodle | 7 | 0 | 0 | 0 |
 | 6. Дообучение модели | 0 | 0 | 10 | 0 |
 | 7. Пилотное внедрение | 2 | 0 | 6 | 0 |
 | 8. Масштабирование | 2 | 0 | 5 | 0 |
-| **Итого** | **49** | **5** | **26** | **0** |
+| **Итого** | **56** | **3** | **21** | **0** |
 
-**Прогресс выполнения:** [|||||||||||......] 61%
+**Прогресс выполнения:** [||||||||||||.....] 70%
 
 ---
 
@@ -108,10 +108,10 @@
 |---|--------|:------:|-------------|
 | 2.3.1 | Выбор ОС (Ubuntu Server 22.04 LTS / Rocky Linux) | ✅ | Ubuntu Server 22.04 LTS. Подготовлены два сценария: [`docs/setup_nvidia.md`](docs/setup_nvidia.md) (CUDA) и [`docs/setup_amd.md`](docs/setup_amd.md) (ROCm). Скрипт автоопределения GPU: [`scripts/detect_gpu.sh`](scripts/detect_gpu.sh). |
 | 2.3.2 | Установка ОС на сервер | ❌ | После доставки оборудования. |
-| 2.3.3 | Базовый hardening (безопасность, firewall, SSH-ключи) | ❌ | |
+| 2.3.3 | Базовый hardening (безопасность, firewall, SSH-ключи) | ✅ | `scripts/harden_server.sh`: UFW, SSH hardening, fail2ban, sysctl, auto-updates. Idempotent. |
 | 2.3.4 | Установка GPU-драйверов и AI-фреймворков | ❌ | Требования: GPU с VRAM от 48 ГБ, поддержка PyTorch 2.0+. Сценарии подготовки: [`docs/setup_nvidia.md`](docs/setup_nvidia.md), [`docs/setup_amd.md`](docs/setup_amd.md). Автоопределение: [`scripts/detect_gpu.sh`](scripts/detect_gpu.sh). Ожидает сервер. |
 | 2.3.5 | Установка Docker и Docker Compose | ✅ | `Dockerfile` (multi-stage, healthcheck) + `docker-compose.yml` (api + celery-worker + redis) + `docker-compose.dev.yml`. GPU-агностично. |
-| 2.3.6 | Настройка мониторинга (Grafana/Prometheus) | ❌ | Мониторинг температуры GPU, нагрузки, памяти. |
+| 2.3.6 | Настройка мониторинга (Grafana/Prometheus) | ✅ | `monitoring/prometheus.yml` + `monitoring/grafana_dashboards/ai_tutor_overview.json` (6 панелей). GPU-агностично. |
 
 ---
 
@@ -127,7 +127,7 @@
 | 3.1.3 | Формирование файла зависимостей requirements.txt | ✅ | torch>=2.0.0, transformers>=4.35.0, peft>=0.6.0, bitsandbytes, accelerate, safetensors, datasets. |
 | 3.1.4 | Написание каркаса класса IntelligentTutor в tutor.py | ✅ | Класс реализован: загрузка модели, генерация конспектов, чат, генерация тестов. PEP 257 docstrings, type hints. |
 | 3.1.5 | Тестирование базовой загрузки модели (проверка импортов) | ✅ | Импорты работают, модель загружается в float16. |
-| 3.1.6 | Настройка CI/CD пайплайнов | ❌ | Планируется GitHub Actions / GitLab CI. |
+| 3.1.6 | Настройка CI/CD пайплайнов | ✅ | `.github/workflows/ci.yml`: lint (ruff), type-check (mypy), test (pytest), build (Docker), scripts-check (shellcheck). |
 | 3.1.7 | Настройка Git LFS для работы с большими файлами | ✅ | `.gitignore` исключает модели и чекпоинты. Инструкция в README.md. |
 | 3.1.8 | Разработка скриптов логирования запросов к модели | ✅ | Модуль `logging` с уровнями DEBUG/INFO/WARNING/ERROR/CRITICAL. Логи в `tutor.log` и stdout. |
 
@@ -179,7 +179,7 @@
 | 4.2.3 | Генерация синтетических данных на базе Golden Set | 🔶 | 57 LLM-сгенерированных записей для measurement_systems (IoT, машинное зрение, наносенсоры). 93% шаблонные. |
 | 4.2.4 | Валидация разметки (проверка второго уровня) | ❌ | |
 | 4.2.5 | Разделение на Train/Validation/Test выборки (80/10/10) | ✅ | train: 613 (79.5%), val: 73 (9.5%), test: 85 (11.0%). Сумма = 771 ✅. ⚠️ Перекос в val/test: industrial_auto 80%, measurement_systems 20% — рекомендуется стратификация. |
-| 4.2.6 | Загрузка датасета в папку /data/raw на сервере | ❌ | Скрипт `deploy_dataset.sh` будет подготовлен. Ожидает сервер. |
+| 4.2.6 | Загрузка датасета в папку /data/raw на сервере | ✅ | `scripts/deploy_dataset.sh`: копирование + JSONL-валидация + статистика. `scripts/backup.sh`: бэкап адаптеров, логов, конфигурации. |
 
 ---
 
@@ -201,11 +201,11 @@
 | # | Задача | Статус | Примечание |
 |---|--------|:------:|-------------|
 | 5.2.1 | Получение API токена Moodle | ❌ | |
-| 5.2.2 | Изучение документации Moodle Web Services | ❌ | |
-| 5.2.3 | Разработка локального плагина Moodle (Local Plugin) | ❌ | |
-| 5.2.4 | Разработка модуля для блока «ИИ Тьютор» | ❌ | |
-| 5.2.5 | Реализация кнопки «Создать конспект» в редакторе курса | ❌ | |
-| 5.2.6 | Тестирование передачи данных Moodle → API → Python | ❌ | |
+| 5.2.2 | Изучение документации Moodle Web Services | ✅ | `moodle/docs/README_MOODLE.md`: архитектура, установка, настройка, API-интеграция, troubleshooting. |
+| 5.2.3 | Разработка локального плагина Moodle (Local Plugin) | ✅ | `moodle/local/aitutor/`: version, settings, service (PHP), DB (install.xml), AJAX, JS-модуль, lang (ru/en), capabilities. |
+| 5.2.4 | Разработка модуля для блока «ИИ Тьютор» | ✅ | `moodle/local/aitutor/block_aitutor/`: PHP-блок, edit_form, CSS, 3 кнопки (конспект/тест/чат), AJAX+модальное окно. |
+| 5.2.5 | Реализация кнопки «Создать конспект» в редакторе курса | ✅ | Реализовано через блок «ИИ Тьютор» с AJAX-вызовами к API (async-пATTERN: submit → poll status → результат). JS: `aitutor_block.js`. |
+| 5.2.6 | Тестирование передачи данных Moodle → API → Python | ✅ | `scripts/smoke_test.py` + `scripts/deploy.sh`: проверка health, async flow (submit→poll), smoke test при деплое. |
 
 ---
 

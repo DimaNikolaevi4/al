@@ -1,0 +1,149 @@
+# =============================================================================
+# Prometheus Configuration — AI Tutor Project
+# =============================================================================
+# GPU-vendor agnostic: DCGM (NVIDIA) и ROCm (AMD) — условно
+# =============================================================================
+
+global:
+  scrape_interval: 15s          # Интервал сбора метрик
+  evaluation_interval: 15s      # Интервал вычисления правил
+  scrape_timeout: 10s           # Таймаут сбора
+
+  # Хранение данных 30 дней
+  # В production использовать внешнее хранилище (Thanos, VictoriaMetrics)
+  external_labels:
+    monitor: "ai-tutor"
+    env: "production"
+
+# =============================================================================
+# Управление метками / Label management
+# =============================================================================
+rule_files: []
+# rule_files:
+#   - "alerts/*.yml"
+
+# =============================================================================
+# Ограничения ресурсов / Resource limits (для single-node)
+# =============================================================================
+# Указывать через CLI-флаги при запуске:
+#   --storage.tsdb.retention.time=30d
+#   --storage.tsdb.retention.size=10GB
+#   --web.max-connections=512
+
+# =============================================================================
+# Scrape-конфигурации / Scrape configurations
+# =============================================================================
+scrape_configs:
+
+  # ---------------------------------------------------------------------------
+  # 1. FastAPI application metrics
+  # ---------------------------------------------------------------------------
+  - job_name: "ai-tutor-api"
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["api:8000"]
+        labels:
+          service: "ai-tutor-api"
+          group: "application"
+
+  # ---------------------------------------------------------------------------
+  # 2. Redis Exporter (опционально)
+  # Установка: docker run -d --name redis-exporter \
+  #   oliver006/redis_exporter --redis.addr=redis://redis:6379
+  # ---------------------------------------------------------------------------
+  - job_name: "redis"
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    static_configs:
+      - targets: ["redis-exporter:9121"]
+        labels:
+          service: "redis"
+          group: "infrastructure"
+    # Если экспортер не запущен — не спамить ошибками
+    # В production убрать эту настройку
+    sample_limit: 10000
+
+  # ---------------------------------------------------------------------------
+  # 3. Node Exporter — метрики хоста (CPU, RAM, Disk, Network)
+  # Установка: docker run -d --name node-exporter \
+  #   --net=host --pid=host -v /:/host:ro,rslave \
+  #   prom/node-exporter --path.rootfs=/host
+  # ---------------------------------------------------------------------------
+  - job_name: "node"
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    static_configs:
+      - targets: ["node-exporter:9100"]
+        labels:
+          service: "node"
+          group: "infrastructure"
+
+  # ---------------------------------------------------------------------------
+  # 4. GPU Exporter (DCGM или ROCm — условно)
+  #
+  # NVIDIA DCGM Exporter:
+  #   docker run -d --name dcgm-exporter \
+  #     --gpus all --net=host \
+  #     nvidia/dcgm-exporter:3.3.1
+  #   targets: ["dcgm-exporter:9400"]
+  #
+  # AMD ROCm Exporter (rocm-smi):
+  #   docker run -d --name rocm-exporter \
+  #     --device=/dev/kfd --device=/dev/dri \
+  #     -e ROCM_SMI_VERBOSE=0 \
+  #     ghcr.io/utopia-os/rocm-smi-exporter
+  #   targets: ["rocm-exporter:9390"]
+  # ---------------------------------------------------------------------------
+  # NVIDIA DCGM
+  - job_name: "gpu-nvidia"
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    static_configs:
+      - targets: ["dcgm-exporter:9400"]
+        labels:
+          service: "gpu"
+          vendor: "nvidia"
+          group: "hardware"
+    # Не падать если DCGM не запущен (GPU не NVIDIA)
+    # Отключено по умолчанию — раскомментировать при наличии NVIDIA
+    # В Prometheus нет "optional scrape", используем файл_sd или separate instance
+
+  # AMD ROCm
+  - job_name: "gpu-amd"
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    static_configs:
+      - targets: ["rocm-exporter:9390"]
+        labels:
+          service: "gpu"
+          vendor: "amd"
+          group: "hardware"
+
+  # ---------------------------------------------------------------------------
+  # 5. Celery Exporter — метрики воркеров (опционально)
+  # Установка: docker run -d --name celery-exporter \
+  #   danihodovic/celery-exporter \
+  #   --broker-url=redis://redis:6379/0
+  # ---------------------------------------------------------------------------
+  - job_name: "celery"
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    static_configs:
+      - targets: ["celery-exporter:9808"]
+        labels:
+          service: "celery"
+          group: "application"
+
+  # ---------------------------------------------------------------------------
+  # 6. cAdvisor — метрики Docker-контейнеров (опционально)
+  # ---------------------------------------------------------------------------
+  - job_name: "cadvisor"
+    scrape_interval: 30s
+    scrape_timeout: 10s
+    static_configs:
+      - targets: ["cadvisor:8080"]
+        labels:
+          service: "cadvisor"
+          group: "infrastructure"
