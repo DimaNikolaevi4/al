@@ -1,38 +1,55 @@
 {
-  "version": "4.0",
-  "source_lectures": 68,
+  "version": "5.0",
+  "source_lectures": 67,
   "subjects": {
     "industrial_auto": 40,
-    "measurement_systems": 28
+    "measurement_systems": 27
   },
-  "total_records": 648,
+  "total_records": 771,
   "splits": {
     "train": {
-      "count": 648
+      "count": 613,
+      "pct": 79.5
     },
     "val": {
-      "count": 59
+      "count": 73,
+      "pct": 9.5
     },
     "test": {
-      "count": 69
+      "count": 85,
+      "pct": 11.0
     }
   },
   "task_types": {
-    "explanation": 140,
-    "summary_basic": 74,
-    "quiz_multiple_choice": 70,
-    "exam_prep": 67,
-    "quiz_open": 58,
-    "step_by_step": 56,
-    "adaptation_ovz": 51,
-    "summary_advanced": 51,
-    "practical_task": 51,
-    "error_analysis": 30
+    "summary_basic": 85,
+    "explanation": 155,
+    "exam_prep": 81,
+    "step_by_step": 64,
+    "quiz_multiple_choice": 82,
+    "summary_advanced": 68,
+    "quiz_open": 71,
+    "practical_task": 64,
+    "adaptation_ovz": 67,
+    "error_analysis": 34
   },
   "difficulty": {
-    "basic": 161,
-    "intermediate": 442,
-    "advanced": 45
+    "intermediate": 555,
+    "advanced": 41,
+    "basic": 175
   },
-  "note": "train=648 (492+156 new). Re-split recommended."
+  "quality": {
+    "template_based": 714,
+    "llm_generated": 57,
+    "llm_subjects": [
+      "measurement_systems"
+    ]
+  },
+  "pipeline": "prepare_dataset.py → clean_data.py → normalize.py → split_dataset.py → validate.py",
+  "validation": "PASSED",
+  "changes_from_v4": [
+    "Added 17 new lectures (10 PA + 7 IS) via prepare_dataset.py",
+    "Generated 57 LLM-quality records for 8 IS lectures (task 10.1.3)",
+    "Replaced 102 template IS records with 57 LLM records",
+    "Full pipeline re-run: clean (771 kept), normalize (842 changes), split, validate"
+  ]
 }
