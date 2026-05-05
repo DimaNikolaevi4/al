@@ -13,16 +13,16 @@
 | Раздел | ✅ Сделано | 🔶 В процессе | ❌ Не начато | 🔒 Заблокировано |
 |--------|:----------:|:-------------:|:------------:|:----------------:|
 | 1. Управление и организация | 10 | 0 | 1 | 0 |
-| 2. Инфраструктура | 3 | 4 | 3 | 0 |
+| 2. Инфраструктура | 4 | 4 | 2 | 0 |
 | 3. Программная архитектура | 12 | 1 | 1 | 0 |
 | 4. Данные | 15 | 0 | 1 | 0 |
-| 5. Интеграция с Moodle | 0 | 0 | 7 | 0 |
+| 5. Интеграция с Moodle | 5 | 0 | 2 | 0 |
 | 6. Дообучение модели | 0 | 0 | 10 | 0 |
 | 7. Пилотное внедрение | 2 | 0 | 6 | 0 |
 | 8. Масштабирование | 2 | 0 | 5 | 0 |
-| **Итого** | **43** | **6** | **31** | **0** |
+| **Итого** | **49** | **5** | **26** | **0** |
 
-**Прогресс выполнения:** [||||||||||.......] 54%
+**Прогресс выполнения:** [|||||||||||......] 61%
 
 ---
 
@@ -110,7 +110,7 @@
 | 2.3.2 | Установка ОС на сервер | ❌ | После доставки оборудования. |
 | 2.3.3 | Базовый hardening (безопасность, firewall, SSH-ключи) | ❌ | |
 | 2.3.4 | Установка GPU-драйверов и AI-фреймворков | ❌ | Требования: GPU с VRAM от 48 ГБ, поддержка PyTorch 2.0+. Сценарии подготовки: [`docs/setup_nvidia.md`](docs/setup_nvidia.md), [`docs/setup_amd.md`](docs/setup_amd.md). Автоопределение: [`scripts/detect_gpu.sh`](scripts/detect_gpu.sh). Ожидает сервер. |
-| 2.3.5 | Установка Docker и Docker Compose | ❌ | Контейнеризация для упрощения деплоя. |
+| 2.3.5 | Установка Docker и Docker Compose | ✅ | `Dockerfile` (multi-stage, healthcheck) + `docker-compose.yml` (api + celery-worker + redis) + `docker-compose.dev.yml`. GPU-агностично. |
 | 2.3.6 | Настройка мониторинга (Grafana/Prometheus) | ❌ | Мониторинг температуры GPU, нагрузки, памяти. |
 
 ---
@@ -190,11 +190,11 @@
 
 | # | Задача | Статус | Примечание |
 |---|--------|:------:|-------------|
-| 5.1.1 | Разработка FastAPI сервера для обёртки модели | ❌ | Планируется структура: `/generate-summary`, `/generate-test`, `/chat-with-tutor`. |
-| 5.1.2 | Реализация эндпоинта /generate-summary | ❌ | |
-| 5.1.3 | Реализация эндпоинта /generate-test | ❌ | |
-| 5.1.4 | Реализация эндпоинта /chat-with-tutor | ❌ | |
-| 5.1.5 | Настройка очередей задач (Celery/Redis) для долгих запросов | ❌ | |
+| 5.1.1 | Разработка FastAPI сервера для обёртки модели | ✅ | `api/main.py`: lifespan (загрузка/выгрузка модели), CORS, timing middleware, exception handlers (503/500/422), degraded mode. |
+| 5.1.2 | Реализация эндпоинта /generate-summary | ✅ | `POST /api/v1/generate-summary`: Pydantic-схемы, валидация длины лекции, замер gen_time, stats. |
+| 5.1.3 | Реализация эндпоинта /generate-test | ✅ | `POST /api/v1/generate-test`: валидация difficulty (easy/medium/hard), num_questions (1-20). |
+| 5.1.4 | Реализация эндпоинта /chat-with-tutor | ✅ | `POST /api/v1/chat`: поддержка conversation_history, Pydantic-модели. |
+| 5.1.5 | Настройка очередей задач (Celery/Redis) для долгих запросов | ✅ | `api/celery_app.py` + `api/tasks.py` + `api/routes/async_generate.py`. Singleton-модель в worker, time limits, retry. `POST /async/*` + `GET /async/status/{id}`. |
 
 ### 5.2 Интеграция с Moodle
 

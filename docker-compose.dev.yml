@@ -1,0 +1,56 @@
+# =============================================================================
+# ИИ-тьютор для СПО — Docker Compose Override (разработка)
+# =============================================================================
+# Использование:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+#
+# Отличия от production:
+#   - API запускается с --reload для горячей перезагрузки кода
+#   - Исходный код монтируется напрямую (не копируется в образ)
+#   - Celery worker с логированием DEBUG
+#   - Redis без персистентности (быстрый рестарт)
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # API — development mode
+  # ---------------------------------------------------------------------------
+  api:
+    volumes:
+      # Монтируем исходный код для hot-reload
+      - .:/app
+      - model-data:/app/.cache/huggingface
+    command: >
+      uvicorn api.main:app
+        --host 0.0.0.0
+        --port 8000
+        --reload
+        --reload-dir /app/api
+        --log-level debug
+    environment:
+      - LOG_LEVEL=DEBUG
+
+  # ---------------------------------------------------------------------------
+  # Celery Worker — development mode (DEBUG, 1 concurrency)
+  # ---------------------------------------------------------------------------
+  celery-worker:
+    volumes:
+      # Монтируем исходный код — изменения сразу видны воркеру
+      - .:/app
+      - model-data:/app/.cache/huggingface
+    command: >
+      celery -A api.celery_app worker
+        --loglevel=debug
+        --concurrency=1
+        --max-tasks-per-child=5
+        --without-heartbeat
+        --purge
+    environment:
+      - LOG_LEVEL=DEBUG
+
+  # ---------------------------------------------------------------------------
+  # Redis — in-memory без персистентности
+  # ---------------------------------------------------------------------------
+  redis:
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+    volumes: []            # Перекрываем volume из основного compose
