@@ -140,6 +140,9 @@ Thumbs.db
 # Docker
 .docker/
 
+# Reports and validation outputs
+reports/
+
 # Local configuration
 *.local
 
