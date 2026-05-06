@@ -3,7 +3,7 @@
 **Файл:** `dataset/CHECKLIST.md`
 **Обновлено:** 05 мая 2026
 **Проект:** ИИ-тьютор для среднего профессионального образования на базе Mistral Small 3.1 (24B)
-**Стек:** Python 3.10+ · PyTorch 2.0+ · Transformers · PEFT (LoRA/QLoRA) · Datasets (Hugging Face)
+**Стек:** Python 3.10+ · PyTorch 2.0+ · Transformers · PEFT (LoRA/QLoRA) · Datasets
 **Репозиторий:** https://git.qubu.ai/REDACTED_USERNAME/ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-dlya-spo
 **Связанный раздел:** Раздел 4 «Данные» корневого CHECKLIST.md
 
@@ -54,7 +54,7 @@
 
 #### Результат 1.1.4 — Формат датасета
 
-Определено на основе: tutor.py (метод `chat()` использует `apply_chat_template()`), библиотеки Transformers/Hugging Face (стандарт SFTTrainer), чат-шаблона Mistral Small 3.1.
+Определено на основе: tutor.py (метод `chat()` использует `apply_chat_template()`), библиотеки Transformers (стандарт SFTTrainer), чат-шаблона Mistral Small 3.1.
 
 **Формат файла:** JSONL (один JSON-объект на строку, кодировка UTF-8 без BOM)
 
@@ -1700,7 +1700,7 @@ def validate_jsonl(filepath):
 
 #### Результат 1.1.5 — Формат чат-шаблона Mistral Small 3.1
 
-Определено на основе: документации Mistral AI (docs.mistral.ai), спецификации Hugging Face (`mistralai/Mistral-Small-24B-Instruct-2501`), метода `chat()` в tutor.py (использует `tokenizer.apply_chat_template()`).
+Определено на основе: документации Mistral AI (docs.mistral.ai), спецификации модели (`mistralai/Mistral-Small-24B-Instruct-2501` в репозитории моделей), метода `chat()` в tutor.py (использует `tokenizer.apply_chat_template()`).
 
 ---
 

@@ -139,7 +139,7 @@
 | 3.2.2 | Тестирование инференса модели | ✅ | Успешно на тестовом стенде (GPU с 80 ГБ VRAM). Время генерации 512 токенов: ~3 сек. |
 | 3.2.3 | Загрузка промптов для генерации конспектов (Prompt Engineering) | ✅ | Промпты в `_build_summary_prompt()` в tutor.py. Оптимизированы для русского языка. |
 | 3.2.4 | Загрузка промптов для генерации тестов | ✅ | Метод `generate_quiz()` в tutor.py. Экспериментальный функционал. |
-| 3.2.5 | Добавление ссылки на скачивание весов в README.md | ✅ | Ссылка на Hugging Face Hub. |
+| 3.2.5 | Добавление ссылки на скачивание весов в README.md | ✅ | Ссылка на репозиторий модели. |
 | 3.2.6 | Подготовка конфигурации для LoRA/QLoRA | ✅ | Файл `lora_config.py`: QLoRA 4-bit (nf4), r=16, alpha=32, 7 target modules, gradient checkpointing. 3 пресета: full/light/debug. GPU-агностично. |
 | 3.2.7 | Формирование функции коллатора данных для обучения | ✅ | Файл `data_collator.py`: TutorDataCollator — chat_template токенизация, динамический паддинг, маскирование prompt-токенов (labels). |
 | 3.2.8 | Написание скрипта запуска обучения (train.py) | ✅ | Файл `train.py`: SFTTrainer, QLoRA, 3 режима (full/light/debug), resume, warmup, TensorBoard. Запуск: `python train.py --mode debug`. |

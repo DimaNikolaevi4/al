@@ -145,7 +145,7 @@ cd al
 
 # 2. Настройка переменных окружения
 cp .env.example .env
-# Отредактируйте .env: MODEL_PATH, HUGGINGFACE_TOKEN
+# Отредактируйте .env: MODEL_PATH, HUGGINGFACE_TOKEN (токен для скачивания модели)
 
 # 3. Запуск через Docker Compose
 docker compose up -d
@@ -215,9 +215,9 @@ python evaluate.py --checkpoint ./checkpoints/best
 
 | Переменная | Описание | По умолчанию |
 |------------|----------|--------------|
-| `MODEL_PATH` | Путь к модели (HF ID или локальный) | `mistralai/Mistral-Small-24B-Instruct-2501` |
+| `MODEL_PATH` | Путь к модели (ID модели или локальный) | `mistralai/Mistral-Small-24B-Instruct-2501` |
 | `ADAPTER_PATH` | Путь к QLoRA адаптерам | пусто (базовая модель) |
-| `HUGGINGFACE_TOKEN` | Токен HF для gated моделей | — |
+| `HUGGINGFACE_TOKEN` | Токен для скачивания моделей (переменная окружения библиотеки) | — |
 | `MAX_TOKENS` | Макс. токенов для генерации | `2048` |
 | `TEMPERATURE` | Температура сэмплирования | `0.7` |
 
@@ -401,7 +401,7 @@ al/
 ## 📚 Полезные ссылки
 
 - [Mistral AI Documentation](https://docs.mistral.ai/)
-- [Hugging Face Transformers](https://huggingface.co/docs/transformers/)
+- [Transformers Documentation](https://huggingface.co/docs/transformers/)
 - [PEFT Documentation (QLoRA)](https://huggingface.co/docs/peft/)
 - [TRL Documentation (SFTTrainer)](https://huggingface.co/docs/trl/)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)

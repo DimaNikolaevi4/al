@@ -413,10 +413,10 @@ nano .env
 ### Экран: содержимое .env (с подсветкой)
 
 ```env
-# Путь к модели (локально или HuggingFace Hub)
+# Путь к модели (локально или из репозитория моделей)
 MODEL_PATH=mistralai/Mistral-Small-24B-Instruct-2501
 
-# Токен Hugging Face (нужен для скачивания модели)
+# Токен для скачивания модели (HUGGINGFACE_TOKEN — переменная окружения библиотеки Transformers)
 HUGGINGFACE_TOKEN=hf_your_token_here
 
 # Уровень логирования: DEBUG, INFO, WARNING, ERROR
@@ -432,9 +432,9 @@ REDIS_URL=redis://redis:6379/0
 
 > «Разберём ключевые параметры.
 >
-> `MODEL_PATH` — это либо имя модели на Hugging Face Hub, либо путь к локальной папке с весами. Если это первое развёртывание, модель скачается автоматически — это около 48 гигабайт, так что запаситесь терпением.
+> `MODEL_PATH` — это либо идентификатор модели в репозитории (например, на Hugging Face Hub), либо путь к локальной папке с весами. Если это первое развёртывание, модель скачается автоматически — это около 48 гигабайт, так что запаситесь терпением.
 >
-> `HUGGINGFACE_TOKEN` — получите бесплатный токен на сайте huggingface.co. Без него скачивание не сработает для некоторых моделей.
+> `HUGGINGFACE_TOKEN` — получите бесплатный токен на сайте huggingface.co. Без него скачивание не сработает для моделей с ограниченным доступом. Имя переменной фиксировано библиотекой Transformers.
 >
 > `LOG_LEVEL` — в продакшене рекомендую `INFO`. Если что-то не работает — переключите на `DEBUG` для подробных логов.
 >
@@ -569,7 +569,7 @@ curl -X POST http://localhost:8000/api/v1/generate-test \
 >
 > Четвёртая — `CUDA out of memory`. Модель 24B в float16 требует около 48 гигабайт VRAM. Если у вас видеокарта с меньшей памятью — используйте квантование до 8 бит через bitsandbytes. Конфигурация описана в `lora_config.py`.
 >
-> Пятая — модель не скачивается с Hugging Face. Проверьте токен: `echo $HUGGINGFACE_TOKEN`. Убедитесь, что у вас есть доступ к модели. Если сервер за прокси — настройте `HTTPS_PROXY` в `.env`.
+> Пятая — модель не скачивается из репозитория. Проверьте токен: `echo $HUGGINGFACE_TOKEN`. Убедитесь, что у вас есть доступ к модели. Если сервер за прокси — настройте `HTTPS_PROXY` в `.env`.
 >
 > Полные инструкции по каждой проблеме есть в документации: setup_nvidia.md, setup_amd.md и README проекта.»
 
@@ -581,7 +581,7 @@ curl -X POST http://localhost:8000/api/v1/generate-test \
 | Потеря SSH после UFW | `sudo ufw allow 22/tcp` через консоль |
 | Docker не видит GPU | `sudo nvidia-ctk runtime configure --runtime=docker` |
 | `CUDA out of memory` | Использовать 8-bit квантование (bitsandbytes) |
-| Модель не скачивается | Проверить `HUGGINGFACE_TOKEN`, прокси |
+| Модель не скачивается | Проверить `HUGGINGFACE_TOKEN`, прокси, доступ к репозиторию |
 | Контейнер падает при старте | `docker compose logs api` — читать логи |
 
 ### Важные замечания для съёмки
@@ -635,7 +635,7 @@ curl -X POST http://localhost:8000/api/v1/generate-test \
 | Скрипт автоопределения GPU | `scripts/detect_gpu.sh` в репозитории |
 | Скрипт hardening | `scripts/harden_server.sh` в репозитории |
 | Методические рекомендации | `docs/draft_methodology_recommendations.md` в репозитории |
-| Hugging Face Token | `https://huggingface.co/settings/tokens` |
+| Токен для скачивания моделей | `https://huggingface.co/settings/tokens` |
 | Docker documentation | `https://docs.docker.com/engine/install/ubuntu/` |
 
 ---
