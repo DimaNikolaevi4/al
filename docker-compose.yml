@@ -7,7 +7,7 @@
 # С кастомным .env:
 #   cp .env.docker.example .env && docker compose up -d
 #
-# GPU (NVIDIA):
+# GPU:
 #   docker compose --profile gpu up -d
 # =============================================================================
 

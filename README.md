@@ -127,10 +127,10 @@ flowchart TB
 
 | Параметр | Минимум | Рекомендуется |
 |----------|---------|---------------|
-| GPU VRAM | 48 GB | 80 GB (A100 / MI250) |
+| GPU VRAM | 48 GB | 80 GB |
 | RAM | 64 GB | 256 GB |
 | Storage | 100 GB SSD | 2 TB NVMe |
-| CPU | 8 cores | 32 cores (EPYC 7543) |
+| CPU | 8 cores | 32 cores |
 
 ---
 

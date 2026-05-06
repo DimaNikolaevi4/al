@@ -272,7 +272,7 @@ slides.push(html(`background-color:${C.bg};display:flex;flex-direction:column;`,
     <div style="width:12pt;height:12pt;background:${C.accent};border-radius:50%;flex-shrink:0;"></div>
     <div style="width:480pt;background:${C['primary-5']};border-radius:6pt;padding:10pt 16pt;border-left:3pt solid ${C['primary-20']};">
       <p style="font-size:14pt;font-weight:bold;color:${C['primary-80']};margin:0;">Инфраструктура</p>
-      <p style="font-size:12pt;color:${C['primary-60']};margin:2pt 0 0 0;">Закупка сервера A100, установка, настройка</p></div>
+      <p style="font-size:12pt;color:${C['primary-60']};margin:2pt 0 0 0;">Закупка GPU, установка, настройка</p></div>
   </div>
   <div style="display:flex;align-items:center;gap:14pt;">
     <div style="width:56pt;flex-shrink:0;text-align:right;"><p style="font-size:11pt;font-weight:bold;color:${C.accent};margin:0;">Q3 2026</p></div>
