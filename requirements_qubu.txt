@@ -1,0 +1,9 @@
+# Requirements for Qubu inference service (BentoML)
+torch>=2.1.0
+transformers>=4.40.0
+accelerate>=0.27.0
+peft>=0.10.0
+bitsandbytes>=0.43.0
+bentoml>=1.2.0
+sentencepiece>=0.2.0
+protobuf>=4.25.0
