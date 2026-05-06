@@ -33,7 +33,7 @@ step()    { echo -e "\n${CYAN}${BOLD}==> $*${NC}"; }
 # ---------------------------------------------------------------------------
 # Конфигурация / Configuration
 # ---------------------------------------------------------------------------
-PROJECT_DIR="/home/z/my-project/al"
+PROJECT_DIR="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
 COMPOSE_FILE="${PROJECT_DIR}/docker-compose.yml"
 ENV_FILE="${PROJECT_DIR}/.env"
 ENV_EXAMPLE="${PROJECT_DIR}/.env.docker.example"

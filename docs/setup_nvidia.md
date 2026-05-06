@@ -83,13 +83,11 @@ sudo add-apt-repository ppa:graphics-drivers/ppa -y
 sudo apt update
 ```
 
-### Установка драйвера (рекомендуется версия 535)
+### Установка драйвера (рекомендуется версия 550)
 
 ```bash
-sudo apt install -y nvidia-driver-535
+sudo apt install -y nvidia-driver-550
 ```
-
-> Для других версий можно установить: `nvidia-driver-525`, `nvidia-driver-545`, `nvidia-driver-550`
 
 ### Перезагрузка
 
@@ -573,10 +571,10 @@ sudo apt install -y build-essential cmake git curl wget htop tmux nano \
   software-properties-common apt-transport-https ca-certificates gnupg lsb-release \
   python3.10 python3.10-venv python3.10-dev python3-pip
 
-echo "=== Установка драйвера NVIDIA 535 ==="
+echo "=== Установка драйвера NVIDIA 550 ==="
 sudo add-apt-repository ppa:graphics-drivers/ppa -y
 sudo apt update
-sudo apt install -y nvidia-driver-535
+sudo apt install -y nvidia-driver-550
 
 echo "=== Установка CUDA Toolkit 12.2 ==="
 wget -q https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb

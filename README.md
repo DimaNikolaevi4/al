@@ -96,7 +96,7 @@ flowchart TB
 
 1. **Студент** открывает курс в Moodle и нажимает «Создать конспект» в блоке «ИИ Тьютор».
 2. **Moodle** отправляет текст лекции через AJAX на FastAPI Gateway (`POST /api/v1/generate-summary`).
-3. **Gateway** ставит задачу в очередь Celery (для долгих запросов используется async-паттерн: `POST /api/v1/async/generate-summary` → `GET /api/v1/async/status/{task_id}`).
+3. **Gateway** ставит задачу в очередь Celery (для долгих запросов используется async-паттерн: `POST /async/generate-summary` → `GET /async/status/{task_id}`).
 4. **IntelligentTutor** загружает модель (singleton в Celery worker) и генерирует конспект.
 5. **Результат** возвращается в Moodle и отображается в модальном окне.
 
@@ -276,7 +276,7 @@ al/
 │   ├── backup.sh                 #   Бэкап адаптеров и логов
 │   └── validate_annotations.py   #   Валидация разметки датасета
 ├── dataset/                      # Датасет для дообучения
-│   ├── data/                     #   train.jsonl, val.jsonl, test.jsonl (771 запись)
+│   ├── data/                     #   train.jsonl, val.jsonl, test.jsonl (771 запись, генерируется из raw/)
 │   └── raw/                      #   67 лекций (40 ПА + 27 ИС)
 ├── docs/                         # Документация и черновики
 │   ├── draft_student_instruction.md
@@ -298,7 +298,7 @@ al/
 ├── docker-compose.dev.yml        # Dev-overlay с hot-reload
 ├── requirements.txt
 ├── .env.example
-├── CHECKLIST.md                  # Чеклист проекта (117 задач, 57%)
+├── CHECKLIST.md                  # Чеклист проекта (117 задач, 56%)
 └── CHANGELOG.md
 ```
 
@@ -314,7 +314,9 @@ al/
 | M4: Пилот | ❌ Не начат | Q4 2026 — внедрение в группе 15.02.14 |
 | M5: Продакшен | ❌ Не начат | Q1 2027 — полноценный релиз |
 
-**Прогресс:** 67 / 117 задач (57%). Подробности в [`CHECKLIST.md`](CHECKLIST.md).
+**Прогресс:** 65 / 117 задач (56%). Подробности в [`CHECKLIST.md`](CHECKLIST.md).
+
+> **Примечание:** файлы `dataset/data/*.jsonl` генерируются скриптами из `dataset/raw/` и не хранятся в Git (исключены `.gitignore`). Для воспроизведения: `prepare_dataset.py` → `clean_data.py` → `split_dataset.py`.
 
 ### Что уже сделано
 

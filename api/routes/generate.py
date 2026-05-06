@@ -4,6 +4,8 @@ Generation endpoints — summary, quiz, and chat.
 These endpoints proxy requests to the :class:`IntelligentTutor` instance
 stored on the FastAPI app state.
 """
+# Автор: Команда ИИ СИТ (Бардаков Д.Н., Мышанская Н.Г.)
+# Лицензия: Apache 2.0
 
 from __future__ import annotations
 

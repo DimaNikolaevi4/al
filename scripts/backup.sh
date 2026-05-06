@@ -34,7 +34,7 @@ step()    { echo -e "\n${CYAN}${BOLD}==> $*${NC}"; "
 # ---------------------------------------------------------------------------
 # Конфигурация / Configuration
 # ---------------------------------------------------------------------------
-PROJECT_DIR="/home/z/my-project/al"
+PROJECT_DIR="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 BACKUP_NAME="ai-tutor-backup-${TIMESTAMP}"
 COMPOSE_FILE="${PROJECT_DIR}/docker-compose.yml"

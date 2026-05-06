@@ -9,6 +9,30 @@
 
 ## [Unreleased] — Будущие версии
 
+### Исправлено
+
+**Критические баги**
+- `train.py`: исправлен сломанный импорт `get_light_config` → `get_lightweight_config`, удалён дубликат config_map и мёртвый код
+- `api/celery_app.py`: исправлено чтение конфигурации — теперь используется `settings`-синглтон вместо дефолтных значений класса (Celery не мог подключиться к Redis)
+- Создан файл `LICENSE` (Apache 2.0), отсутствовавший в репозитории
+
+**Высокий приоритет**
+- `docker-compose.yml` + `Dockerfile`: исправлен healthcheck путь `/health` → `/api/v1/health`, увеличен `start_period` до 300s для загрузки 24B модели
+- `tutor.py` chat(): заменён устаревший парсинг `[/INST]` на корректное извлечение новых токенов (для Mistral chat template)
+- `scripts/smoke_test.py`: исправлен payload generate-summary (`text` → `lecture_text`)
+- `scripts/deploy.sh`, `deploy_dataset.sh`, `backup.sh`: убраны хардкодные пути, используется динамическое определение PROJECT_DIR
+- `requirements.txt`: добавлены отсутствующие зависимости `pydantic>=2.5.0` и `pytest>=7.4.0`
+- `Dockerfile`: исправлен URL `org.opencontainers.image.source` и версия `0.2.0` → `0.3.0`
+- `api/main.py`: синхронизирована версия API `0.2.0` → `0.3.0`
+- `api/models.py`: заменён устаревший `datetime.utcnow()` на `datetime.now(timezone.utc)`
+
+**Средний приоритет**
+- `CHECKLIST.md`: исправлена опечатка «async-пATTERN», скорректированы статусы задач (CI/CD, PDF ТЗ), обновлена сводка
+- `monitoring/prometheus.yml`: добавлен комментарий о необходимости интеграции metrics-endpoint
+- `docs/setup_nvidia.md`: обновлена рекомендация драйвера 535 → 550
+- `.gitignore`: добавлено исключение `docs/pptx-workspace/`, удалено мёртвое правило `datasets/`
+- Все файлы `api/`: добавлены заголовки лицензии Apache 2.0
+
 ### Планируется
 - Дообучение модели на датасете СИТ (ожидает GPU)
 - Gold Standard (50 примеров ручной разметки)

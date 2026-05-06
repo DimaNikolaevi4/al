@@ -4,6 +4,8 @@ FastAPI application entry point.
 Creates the application, registers middleware, exception handlers,
 and manages the model lifecycle via an async lifespan context manager.
 """
+# Автор: Команда ИИ СИТ (Бардаков Д.Н., Мышанская Н.Г.)
+# Лицензия: Apache 2.0
 
 from __future__ import annotations
 
@@ -109,7 +111,7 @@ def create_app() -> FastAPI:
             "Генерация конспектов лекций, тестов и диалоговая поддержка на базе "
             "Mistral Small 24B с LoRA-адаптацией."
         ),
-        version="0.2.0",
+        version="0.3.0",
         lifespan=lifespan,
         docs_url="/docs",
         redoc_url="/redoc",

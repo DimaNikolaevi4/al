@@ -37,6 +37,8 @@ scrape_configs:
 
   # ---------------------------------------------------------------------------
   # 1. FastAPI application metrics
+  #     Требует интеграции prometheus-fastapi-instrumentator в api/main.py
+  #     (планируется при наличии сервера с GPU)
   # ---------------------------------------------------------------------------
   - job_name: "ai-tutor-api"
     scrape_interval: 15s

@@ -538,10 +538,10 @@ class IntelligentTutor:
                     top_p=0.9,
                 )
 
-            response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-            # Извлечение только ответа ассистента
-            if "[/INST]" in response:
-                response = response.split("[/INST]")[-1].strip()
+            # Извлечение только новых токенов (ответ ассистента)
+            input_len = inputs["input_ids"].shape[1]
+            new_tokens = outputs[0][input_len:]
+            response = self.tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
 
             logger.debug(f"Ответ чата сгенерирован: {len(response)} символов")
             return response

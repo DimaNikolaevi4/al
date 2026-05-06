@@ -4,6 +4,8 @@ System endpoints — health, model info, and usage statistics.
 Provides operational visibility into the running service: model status,
 GPU utilisation, configuration, and lightweight request counters.
 """
+# Автор: Команда ИИ СИТ (Бардаков Д.Н., Мышанская Н.Г.)
+# Лицензия: Apache 2.0
 
 from __future__ import annotations
 

@@ -4,10 +4,12 @@ Pydantic models for all API request/response schemas.
 Defines strict input validation models and consistent response wrappers
 used across all API endpoints.
 """
+# Автор: Команда ИИ СИТ (Бардаков Д.Н., Мышанская Н.Г.)
+# Лицензия: Apache 2.0
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Generic, Optional, TypeVar
 
 from pydantic import BaseModel, Field, field_validator
@@ -36,7 +38,7 @@ class MetaInfo(BaseModel):
         description="Количество выходных токенов (если доступно)",
     )
     timestamp: datetime = Field(
-        default_factory=datetime.utcnow,
+        default_factory=lambda: datetime.now(timezone.utc),
         description="Временная метка ответа (UTC)",
     )
 

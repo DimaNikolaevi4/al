@@ -414,7 +414,7 @@ cat > /etc/logrotate.d/ai-tutor <<'LOGROTATE_EOF'
     create 0644 root adm
     sharedscripts
     postrotate
-        docker compose -f /home/z/my-project/al/docker-compose.yml logs --tail=0 > /dev/null 2>&1 || true
+        docker compose -f <PROJECT_ROOT>/docker-compose.yml logs --tail=0 > /dev/null 2>&1 || true
     endscript
 }
 

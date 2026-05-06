@@ -221,8 +221,7 @@ def test_generate_summary(base_url: str, report: SmokeTestReport) -> None:
     """Test POST /api/v1/generate-summary with minimal input."""
     url = f"{base_url}/api/v1/generate-summary"
     payload = {
-        "text": "Тестовый текст для проверки API.",
-        "subject": "test",
+        "lecture_text": "Тестовый текст лекции для проверки API. Тема: основные принципы автоматизации.",
     }
 
     status, body, ms, err = api_request("POST", url, json=payload, timeout=30)

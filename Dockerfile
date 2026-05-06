@@ -40,8 +40,8 @@ FROM python:3.11-slim AS runtime
 
 LABEL maintainer="Команда ИИ СИТ (Бардаков Д.Н., Мышанская Н.Г.)"
 LABEL description="ИИ-тьютор для СПО — FastAPI + Celery"
-LABEL version="0.2.0"
-LABEL org.opencontainers.image.source="https://github.com/ai-tutor-spo"
+LABEL version="0.3.0"
+LABEL org.opencontainers.image.source="https://github.com/DimaNikolaevi4/al"
 
 WORKDIR /app
 
@@ -65,9 +65,9 @@ ENV PYTHONUNBUFFERED=1
 
 EXPOSE 8000
 
-# Healthcheck — проверяем, что API отвечает на /health
-HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
+# Healthcheck — проверяем, что API отвечает на /api/v1/health
+HEALTHCHECK --interval=30s --timeout=10s --start-period=300s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')" || exit 1
 
 # Команда по умолчанию — FastAPI-сервер (перезаписывается в docker-compose для celery-worker)
 CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]

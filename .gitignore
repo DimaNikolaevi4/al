@@ -87,9 +87,11 @@ tutor.log
 
 # Data directories (may contain sensitive educational materials)
 data/
-datasets/
 raw_data/
 processed_data/
+
+# Presentation build artifacts (keep only .pptx)
+docs/pptx-workspace/
 
 # Model weights and checkpoints (large files)
 models/

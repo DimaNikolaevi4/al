@@ -32,7 +32,7 @@ step()    { echo -e "\n${CYAN}${BOLD}==> $*${NC}"; }
 # ---------------------------------------------------------------------------
 # Конфигурация по умолчанию / Default configuration
 # ---------------------------------------------------------------------------
-PROJECT_DIR="/home/z/my-project/al"
+PROJECT_DIR="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
 DEFAULT_SOURCE="${PROJECT_DIR}/dataset/data"
 DEFAULT_TARGET="/data"  # Путь внутри Docker volume
 COMPOSE_FILE="${PROJECT_DIR}/docker-compose.yml"

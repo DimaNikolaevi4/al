@@ -268,10 +268,8 @@ def main() -> None:
     logger.info("=" * 60)
 
     # --- Конфигурация ---
-    from lora_config import LoRAConfig, get_debug_config, get_light_config, get_full_config
+    from lora_config import LoRAConfig, get_debug_config, get_lightweight_config, get_full_config
 
-    config_map = {"full": get_full_config, "light": get_lightweight_config, "debug": get_debug_config}
-    # Fix: get_lightweight_config for "light" mode
     config_map = {"full": get_full_config, "light": get_lightweight_config, "debug": get_debug_config}
 
     lora_cfg = config_map[args.mode]()
@@ -439,13 +437,6 @@ def main() -> None:
     if trainer.state.best_metric is not None:
         logger.info(f"  Лучший eval_loss: {trainer.state.best_metric:.4f}")
     logger.info("=" * 60)
-
-
-# --- Утилита для get_lightweight_config (алиас для лёгкого режима) ---
-def get_lightweight_config() -> "LoRAConfig":
-    """Алиас для get_lightweight_config из lora_config."""
-    from lora_config import get_lightweight_config as _glc
-    return _glc()
 
 
 if __name__ == "__main__":
