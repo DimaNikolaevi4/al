@@ -81,22 +81,22 @@ scrape_configs:
           group: "infrastructure"
 
   # ---------------------------------------------------------------------------
-  # 4. GPU Exporter (DCGM или ROCm — условно)
+  # 4. GPU Exporter (выбор зависит от установленного GPU)
   #
-  # NVIDIA DCGM Exporter:
+  # Для GPU с CUDA (DCGM Exporter):
   #   docker run -d --name dcgm-exporter \
   #     --gpus all --net=host \
   #     nvidia/dcgm-exporter:3.3.1
   #   targets: ["dcgm-exporter:9400"]
   #
-  # AMD ROCm Exporter (rocm-smi):
+  # Для GPU с ROCm (rocm-smi Exporter):
   #   docker run -d --name rocm-exporter \
   #     --device=/dev/kfd --device=/dev/dri \
   #     -e ROCM_SMI_VERBOSE=0 \
   #     ghcr.io/utopia-os/rocm-smi-exporter
   #   targets: ["rocm-exporter:9390"]
   # ---------------------------------------------------------------------------
-  # NVIDIA DCGM
+  # GPU с CUDA (DCGM)
   - job_name: "gpu-nvidia"
     scrape_interval: 15s
     scrape_timeout: 10s
@@ -104,13 +104,13 @@ scrape_configs:
       - targets: ["dcgm-exporter:9400"]
         labels:
           service: "gpu"
-          vendor: "nvidia"
+          vendor: "cuda"
           group: "hardware"
-    # Не падать если DCGM не запущен (GPU не NVIDIA)
-    # Отключено по умолчанию — раскомментировать при наличии NVIDIA
+    # Не падать если DCGM не запущен (GPU не CUDA)
+    # Отключено по умолчанию — раскомментировать при наличии GPU с CUDA
     # В Prometheus нет "optional scrape", используем файл_sd или separate instance
 
-  # AMD ROCm
+  # GPU с ROCm
   - job_name: "gpu-amd"
     scrape_interval: 15s
     scrape_timeout: 10s
@@ -118,7 +118,7 @@ scrape_configs:
       - targets: ["rocm-exporter:9390"]
         labels:
           service: "gpu"
-          vendor: "amd"
+          vendor: "rocm"
           group: "hardware"
 
   # ---------------------------------------------------------------------------

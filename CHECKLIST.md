@@ -216,7 +216,7 @@
 
 | # | Задача | Статус | Примечание |
 |---|--------|:------:|-------------|
-| 6.1.1 | Проверка доступности GPU памяти (nvidia-smi) | ❌ | После установки сервера. |
+| 6.1.1 | Проверка доступности GPU памяти | ❌ | После установки сервера. Используйте `scripts/detect_gpu.sh` для автоопределения. |
 | 6.1.2 | Очистка кэша перед запуском | ❌ | |
 | 6.1.3 | Настройка логов TensorBoard | ❌ | |
 
@@ -342,7 +342,7 @@ ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-
 │   └── grafana_dashboards/ai_tutor_overview.json
 ├── scripts/              # Скрипты
 │   ├── harden_server.sh      # Базовый hardening (idempotent)
-│   ├── detect_gpu.sh         # Автоопределение GPU (NVIDIA/AMD)
+│   ├── detect_gpu.sh         # Автоопределение GPU (CUDA/ROCm)
 │   ├── deploy_dataset.sh     # Деплой датасета + валидация
 │   ├── deploy.sh             # Деплой приложения + smoke test
 │   ├── smoke_test.py         # Smoke test API

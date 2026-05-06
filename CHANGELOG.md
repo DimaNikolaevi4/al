@@ -54,7 +54,7 @@
 
 **Инфраструктурные скрипты**
 - **`scripts/harden_server.sh`**: UFW, SSH hardening, fail2ban, sysctl, auto-updates (idempotent)
-- **`scripts/detect_gpu.sh`**: автоопределение GPU (NVIDIA/AMD)
+- **`scripts/detect_gpu.sh`**: автоопределение GPU (CUDA/ROCm)
 - **`scripts/deploy.sh`**: деплой приложения + smoke test
 - **`scripts/deploy_dataset.sh`**: копирование датасета + JSONL-валидация + статистика
 - **`scripts/smoke_test.py`**: проверка health, async flow (submit → poll)
@@ -73,7 +73,7 @@
 - Расчёт ROI (`docs/roi_calculation.md`, 3 сценария)
 - Сценарий видео-урока (`docs/draft_video_script.md`, ~30 мин)
 - Руководство по Gold Standard (`docs/gold_standard_guidelines.md`)
-- Сценарии установки NVIDIA (`docs/setup_nvidia.md`) и AMD (`docs/setup_amd.md`)
+- Сценарии установки для GPU с CUDA (`docs/setup_nvidia.md`) и ROCm (`docs/setup_amd.md`)
 
 **Юридические документы**
 - Соглашение об использовании ИИ для студентов (`docs/draft_student_ai_agreement.md`)
