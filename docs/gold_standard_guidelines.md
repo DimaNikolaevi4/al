@@ -295,7 +295,7 @@ python scripts/validate_annotations.py --data-dir dataset/data/ --strict
 
 Ведите учёт в формате:
 
-| # | Дисциплина | task_type | difficulty | topic | source_file | Статус | 备注 |
+| # | Дисциплина | task_type | difficulty | topic | source_file | Статус | Примечание |
 |---|-----------|-----------|------------|-------|-------------|--------|------|
 | 1 | ПА | summary | medium | ПИД-регулирование | S1_A11_пид_регулирование.md | ✅ | — |
 | 2 | ПА | quiz | easy | Датчики давления | S1_A05_датчики_давления.md | 🔶 | нужен дистрактор для вопроса 3 |
