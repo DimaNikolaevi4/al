@@ -1,0 +1,11 @@
+# Qubu Deploy — .gitignore
+*.gguf
+*.egg-info/
+__pycache__/
+*.pyc
+dist/
+build/
+.eggs/
+qubu-model-repo/
+.env
+.env.secrets

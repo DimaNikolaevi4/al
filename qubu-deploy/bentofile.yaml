@@ -1,0 +1,13 @@
+service: "service_gguf:service"
+description: "AI Tutor для СПО на базе Mistral Small 24B (GGUF Q4_K_M, llama-cpp-python, CUDA 12.1)"
+labels:
+  owner: REDACTED_USERNAME
+  project: ai-tutor-spo
+  model: Mistral-Small-24B-Instruct-2501-Q4_K_M
+  contest: gravitatsiya-2026
+include:
+  - "*.py"
+  - "bentofile.yaml"
+python:
+  packages:
+    - bentoml>=1.2.0
