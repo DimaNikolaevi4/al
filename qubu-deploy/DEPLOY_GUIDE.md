@@ -195,7 +195,7 @@ AI Tutor Service на Qubu
 
 ## 6. Файлы проекта
 
-### `service_gguf.py` — основной сервисный файл
+### `service.py` — основной сервисный файл
 
 Находится в git-репозитории модели на Qubu. Это файл, который BentoML использует как точку входа.
 
@@ -302,7 +302,7 @@ def chat(ctx, inputs: Dict[str, Any]) -> Dict[str, Any]:
 ### `bentofile.yaml` — конфигурация BentoML
 
 ```yaml
-service: "service_gguf:service"
+service: "service:Service"
 description: "AI Tutor для СПО на базе Mistral Small 24B (GGUF Q4_K_M)"
 labels:
   owner: REDACTED_USERNAME
@@ -499,7 +499,7 @@ API-метод `PUT /api/models/{id}/inference/config` работает, но и
 5. Добавить файлы в репозиторий:
    ```bash
    git add Mistral-Small-24B-Instruct-2501-Q4_K_M.gguf
-   git add service_gguf.py bentofile.yaml requirements.txt
+   git add service.py bentofile.yaml requirements.txt
    git commit -m "Add GGUF model and service files"
    git push origin main
    ```
@@ -513,7 +513,7 @@ API-метод `PUT /api/models/{id}/inference/config` работает, но и
    ```
    Перейти на вкладку «Инференс» и заполнить:
 
-   **Code (service_gguf.py):** Вставить код сервиса (см. раздел 6)
+   **Code (service.py):** Вставить код сервиса (см. раздел 6)
 
    **Requirements:**
    ```
@@ -529,7 +529,7 @@ API-метод `PUT /api/models/{id}/inference/config` работает, но и
 
    **bentofile.yaml:**
    ```yaml
-   service: "service_gguf:service"
+   service: "service:Service"
    description: "AI Tutor для СПО (GGUF Q4_K_M)"
    labels:
      owner: REDACTED_USERNAME
@@ -681,8 +681,8 @@ https://huggingface.co/bartowski/Mistral-7B-Instruct-v0.3-GGUF
 
 Перед деплоем проверить:
 
-- [ ] service_gguf.py содержит корректный код (импорт llama_cpp, bentoml)
-- [ ] bentofile.yaml указывает на `service_gguf:service`
+- [ ] service.py содержит корректный код (импорт llama_cpp, bentoml)
+- [ ] bentofile.yaml указывает на `service:Service`
 - [ ] requirements.txt минимальный (bentoml>=1.2.0)
 - [ ] Startup script устанавливает llama-cpp-python из pre-built wheel (CUDA 12.1)
 - [ ] GGUF файл загружен через Git LFS ИЛИ startup script содержит wget

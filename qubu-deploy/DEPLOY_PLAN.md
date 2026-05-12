@@ -9,17 +9,18 @@
 
 ---
 
-## Исходные данные (учётные записи)
+## Исходные данные
+
+Учётные данные хранятся локально в `.env.secrets` (не попадает в git).
 
 ### Qubu
 - **Email:** REDACTED_EMAIL
-- **Пароль:** [см. чат/-notes — GitHub блокирует пуш с открытыми паролями]
-- **API-токен:** quai_0ef02...3e (полный токен в notes/чате)
+- **API-токен:** `$QUBU_API_TOKEN`
 - **Git-пользователь:** REDACTED_USERNAME
-- **Git-токен:** 37665b...554f (полный токен в notes/чате)
+- **Git-токен:** `$QUBU_GIT_TOKEN`
 
 ### GitHub
-- **Токен:** ghp_ayAy...2eLuLO (полный токен в notes/чате)
+- **Токен:** `$GITHUB_TOKEN`
 - **Репозиторий:** https://github.com/DimaNikolaevi4/al
 
 ### Ссылки на Qubu

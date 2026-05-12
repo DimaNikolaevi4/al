@@ -3,7 +3,7 @@
 Скрипт для деплоя модели на Qubu через API.
 
 Использование:
-  python deploy_qubu.py [--push-lfs] [--deploy]
+  python deploy_qubu.py [--push-lfs] [--deploy] [--status]
 
 Опции:
   --push-lfs    Загрузить GGUF в репозиторий Qubu через Git LFS
@@ -16,7 +16,6 @@ import json
 import os
 import subprocess
 import sys
-import time
 import urllib.request
 import urllib.error
 
@@ -67,23 +66,9 @@ def api_request(method: str, path: str, data: dict = None) -> dict:
         return {"error": str(e)}
 
 
-def get_service_code() -> str:
-    """Read service_gguf.py content."""
-    path = os.path.join(SCRIPT_DIR, "service_gguf.py")
-    with open(path, "r", encoding="utf-8") as f:
-        return f.read()
-
-
-def get_bentofile() -> str:
-    """Read bentofile.yaml content."""
-    path = os.path.join(SCRIPT_DIR, "bentofile.yaml")
-    with open(path, "r", encoding="utf-8") as f:
-        return f.read()
-
-
-def get_startup_script() -> str:
-    """Read startup_script.sh content."""
-    path = os.path.join(SCRIPT_DIR, "startup_script.sh")
+def _read_file(filename: str) -> str:
+    """Read a file relative to SCRIPT_DIR."""
+    path = os.path.join(SCRIPT_DIR, filename)
     with open(path, "r", encoding="utf-8") as f:
         return f.read()
 
@@ -112,13 +97,13 @@ def push_to_lfs(repo_dir: str = "./qubu-model-repo"):
 
     print()
     print("=" * 60)
-    print("STEP 3: Downloading GGUF model (~15 GB)")
+    print("STEP 3: Downloading GGUF model")
     print("=" * 60)
     gguf_path = os.path.join(repo_dir, "Mistral-Small-24B-Instruct-2501-Q4_K_M.gguf")
     if not os.path.exists(gguf_path):
         print("Downloading... (this may take 15-30 minutes)")
         subprocess.run([
-            "wget", "-c", "-O", gguf_path, GGUF_URL
+            "wget", "--timeout=30", "--tries=3", "-c", "-O", gguf_path, GGUF_URL
         ], check=True)
         size = os.path.getsize(gguf_path) / (1024 ** 3)
         print(f"Downloaded: {size:.1f} GB")
@@ -131,26 +116,12 @@ def push_to_lfs(repo_dir: str = "./qubu-model-repo"):
     print("STEP 4: Copying project files")
     print("=" * 60)
 
-    # Copy service file
-    src = os.path.join(SCRIPT_DIR, "service_gguf.py")
-    dst = os.path.join(repo_dir, "service_gguf.py")
-    if os.path.exists(src):
-        subprocess.run(["cp", src, dst], check=True)
-        print("  - service_gguf.py")
-
-    # Copy bentofile
-    src = os.path.join(SCRIPT_DIR, "bentofile.yaml")
-    dst = os.path.join(repo_dir, "bentofile.yaml")
-    if os.path.exists(src):
-        subprocess.run(["cp", src, dst], check=True)
-        print("  - bentofile.yaml")
-
-    # Copy requirements
-    src = os.path.join(SCRIPT_DIR, "requirements_gguf.txt")
-    dst = os.path.join(repo_dir, "requirements.txt")
-    if os.path.exists(src):
-        subprocess.run(["cp", src, dst], check=True)
-        print("  - requirements.txt")
+    for filename in ["service.py", "bentofile.yaml", "requirements.txt"]:
+        src = os.path.join(SCRIPT_DIR, filename)
+        dst = os.path.join(repo_dir, filename)
+        if os.path.exists(src):
+            subprocess.run(["cp", src, dst], check=True)
+            print(f"  - {filename}")
 
     print()
     print("=" * 60)
@@ -161,7 +132,7 @@ def push_to_lfs(repo_dir: str = "./qubu-model-repo"):
         "git", "commit", "-m",
         "Deploy: GGUF Q4_K_M model + llama-cpp-python service"
     ], cwd=repo_dir, check=False)
-    print("Pushing via Git LFS (15 GB, may take 15-30 min)...")
+    print("Pushing via Git LFS (may take 15-30 min)...")
     subprocess.run(["git", "push", "origin", "main"], cwd=repo_dir, check=True)
 
     print()
@@ -176,14 +147,14 @@ def deploy_via_api():
     print("Updating inference config via API")
     print("=" * 60)
 
-    code = get_service_code()
-    bentofile = get_bentofile()
-    startup_script = get_startup_script()
+    code = _read_file("service.py")
+    bentofile = _read_file("bentofile.yaml")
+    startup_script = _read_file("startup_script.sh")
 
     config = {
         "code": code,
-        "requirements": "bentoml>=1.2.0",
-        "env": f"MODEL_PATH=/workspace/model\nN_CTX=2048\nN_GPU_LAYERS=-1",
+        "requirements": _read_file("requirements.txt").strip(),
+        "env": "MODEL_PATH=/workspace/model\nN_CTX=2048\nN_GPU_LAYERS=-1",
         "startup_script": startup_script,
         "bentofile": bentofile,
     }
@@ -215,7 +186,6 @@ def deploy_via_api():
         return False
 
     print(f"Deploy triggered: {json.dumps(result, indent=2)[:300]}...")
-
     return True
 
 
