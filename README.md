@@ -215,7 +215,7 @@ python evaluate.py --checkpoint ./checkpoints/best
 
 | Переменная | Описание | По умолчанию |
 |------------|----------|--------------|
-| `MODEL_PATH` | Путь к модели (ID модели или локальный) | `mistralai/Mistral-Small-24B-Instruct-2501` |
+| `MODEL_PATH` | Путь к модели (ID модели или локальный) | `Qwen/Qwen2.5-7B-Instruct` |
 | `ADAPTER_PATH` | Путь к QLoRA адаптерам | пусто (базовая модель) |
 | `HUGGINGFACE_TOKEN` | Токен для скачивания моделей (переменная окружения библиотеки) | — |
 | `MAX_TOKENS` | Макс. токенов для генерации | `2048` |
@@ -408,7 +408,6 @@ al/
 - [TRL Documentation (SFTTrainer)](https://huggingface.co/docs/trl/)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [Moodle Web Services](https://docs.moodle.org/dev/Web_services)
-- [Репозиторий на Qubu](https://git.qubu.ai/REDACTED_USERNAME/ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-dlya-spo)
 - [Репозиторий на GitHub](https://github.com/DimaNikolaevi4/al)
 
 ---

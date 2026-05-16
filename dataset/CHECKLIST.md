@@ -4,7 +4,7 @@
 **Обновлено:** 05 мая 2026
 **Проект:** ИИ-тьютор для среднего профессионального образования на базе Mistral Small 3.1 (24B)
 **Стек:** Python 3.10+ · PyTorch 2.0+ · Transformers · PEFT (LoRA/QLoRA) · Datasets
-**Репозиторий:** https://git.qubu.ai/REDACTED_USERNAME/ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-dlya-spo
+**Репозиторий:** https://github.com/DimaNikolaevi4/al
 **Связанный раздел:** Раздел 4 «Данные» корневого CHECKLIST.md
 
 ---

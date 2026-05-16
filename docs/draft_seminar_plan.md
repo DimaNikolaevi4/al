@@ -231,12 +231,12 @@
 
 | Материал | Ссылка |
 |---|---|
-| Инструкция для преподавателей | [`docs/draft_teacher_instruction.md`](draft_teacher_instruction.md) (репозиторий Qubu) |
-| Инструкция для студентов | [`docs/draft_student_instruction.md`](draft_student_instruction.md) (репозиторий Qubu) |
-| Соглашение об использовании ИИ (для студентов) | [`docs/draft_student_ai_agreement.md`](draft_student_ai_agreement.md) (репозиторий Qubu) |
-| Соглашение об обработке материалов (для преподавателей) | [`docs/draft_teacher_materials_agreement.md`](draft_teacher_materials_agreement.md) (репозиторий Qubu) |
-| Методические рекомендации | [`docs/draft_methodology_recommendations.md`](draft_methodology_recommendations.md) (репозиторий Qubu) |
-| Презентация проекта | [`docs/ai_tutor_presentation.pptx`](ai_tutor_presentation.pptx) (репозиторий Qubu) |
+| Инструкция для преподавателей | [`docs/draft_teacher_instruction.md`](draft_teacher_instruction.md) (репозиторий GitHub) |
+| Инструкция для студентов | [`docs/draft_student_instruction.md`](draft_student_instruction.md) (репозиторий GitHub) |
+| Соглашение об использовании ИИ (для студентов) | [`docs/draft_student_ai_agreement.md`](draft_student_ai_agreement.md) (репозиторий GitHub) |
+| Соглашение об обработке материалов (для преподавателей) | [`docs/draft_teacher_materials_agreement.md`](draft_teacher_materials_agreement.md) (репозиторий GitHub) |
+| Методические рекомендации | [`docs/draft_methodology_recommendations.md`](draft_methodology_recommendations.md) (репозиторий GitHub) |
+| Презентация проекта | [`docs/ai_tutor_presentation.pptx`](ai_tutor_presentation.pptx) (репозиторий GitHub) |
 
 ### 5.3. Чек-лист подготовки лекционного материала (для распечатки)
 

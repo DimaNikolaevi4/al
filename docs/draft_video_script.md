@@ -67,7 +67,7 @@
 >
 > Минимальные требования к серверу: видеокарта с объёмом видеопамяти от 48 гигабайт — это может быть любой GPU-ускоритель с 48+ ГБ VRAM. Также нужно минимум 256 гигабайт оперативной памяти и двухтерабайтный NVMe-накопитель. Операционная система — Ubuntu Server 22.04 LTS.
 >
-> Все команды из этого видео есть в документации проекта на Git Qubu, ссылки я оставлю в описании. Поехали!»
+> Все команды из этого видео есть в документации проекта на GitHub, ссылки я оставлю в описании. Поехали!»
 
 ### Важные замечания для съёмки
 - Заставка — можно сделать в Canva / Figma, использовать логотип техникума и проекта.
@@ -202,7 +202,7 @@ sudo systemctl start fail2ban
 
 ```bash
 # Скачиваем и запускаем скрипт автоопределения
-curl -sL https://git.qubu.ai/.../scripts/detect_gpu.sh | bash
+curl -sL https://raw.githubusercontent.com/DimaNikolaevi4/al/main/scripts/detect_gpu.sh | bash
 # Или, если уже клонировали репозиторий:
 bash scripts/detect_gpu.sh
 ```
@@ -387,12 +387,8 @@ docker compose version
 
 ```bash
 # Клонируем репозиторий
-git clone https://git.qubu.ai/REDACTED_USERNAME/ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-dlya-spo.git
-cd ml_model-...-dlya-spo
-
-# Или, если имя директории слишком длинное:
-git clone https://git.qubu.ai/REDACTED_USERNAME/ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-dlya-spo.git ai-tutor
-cd ai-tutor
+git clone https://github.com/DimaNikolaevi4/al.git
+ai-tutor
 
 # Смотрим структуру проекта
 ls -la
@@ -629,7 +625,7 @@ curl -X POST http://localhost:8000/api/v1/generate-test \
 
 | Ресурс | URL |
 |--------|-----|
-| Репозиторий проекта | `https://git.qubu.ai/REDACTED_USERNAME/ml_model-intellektualniy-tyutor-na-osnove-otkrytykh-bolshikh-yazykovykh-modelei-dlya-spo` |
+| Репозиторий проекта | `https://github.com/DimaNikolaevi4/al` |
 | Установка NVIDIA | `docs/setup_nvidia.md` в репозитории |
 | Установка AMD | `docs/setup_amd.md` в репозитории |
 | Скрипт автоопределения GPU | `scripts/detect_gpu.sh` в репозитории |
