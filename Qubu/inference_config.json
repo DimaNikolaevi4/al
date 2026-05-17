@@ -1,0 +1,26 @@
+{
+  "inferenceConfig": {
+    "version": 1,
+    "functions": [
+      {
+        "name": "predict",
+        "path": "/predict",
+        "method": "POST",
+        "input": {
+          "fields": [
+            {
+              "name": "message",
+              "type": "string",
+              "required": true,
+              "in": "body"
+            }
+          ]
+        },
+        "output": {
+          "showRawJson": true
+        },
+        "requiresAuth": "qubu"
+      }
+    ]
+  }
+}
